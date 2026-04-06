@@ -1,0 +1,227 @@
+/* src/styles/navbar.css */
+
+.main-navbar {
+  background-color: var(--bg-main);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  width: 100%;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Lado Izquierdo */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.brand-logo {
+  color: var(--primary);
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-item {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  color: white;
+  background-color: var(--bg-card);
+}
+
+.nav-item.active {
+  color: white;
+  background-color: var(--bg-card);
+}
+
+/* Lado Derecho - User Pill */
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.user-pill {
+  background-color: var(--bg-card);
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.user-name {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #e2e8f0;
+  line-height: 1;
+}
+
+.user-role-tag {
+  font-size: 0.65rem;
+  color: var(--primary);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.divider {
+  height: 2rem;
+  width: 1px;
+  background-color: var(--border-color);
+  margin: 0 1rem;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.logout-btn:hover {
+  color: #fca5a5;
+}
+.mobile-menu-btn { display: none; } /* Oculto en PC */
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0.8rem 1rem;
+  }
+  .main-navbar {
+    position: relative; 
+    z-index: 1000;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .nav-menu {
+    display: none; 
+    /* CAMBIO CLAVE: Posicionamiento absoluto para que no empuje el contenido */
+    position: absolute;
+    top: 100%; /* Justo debajo de la barra */
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-card);
+    flex-direction: column;
+    padding: 1rem 0; /* Espaciado interno */
+    border-bottom: 2px solid var(--primary);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .nav-menu.is-open {
+    display: flex; /* Se muestra al dar click */
+  }
+
+  .nav-item {
+    width: 100%;
+    padding: 1.2rem 2rem; /* Más área de click para dedos */
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0; /* Quitamos redondeado en móvil para que llene el ancho */
+  }
+
+  .desktop-only {
+    display: none; /* Ocultamos el pill de usuario en móvil para no saturar */
+  }
+
+  /* Opcional: mostrar un botón de salir simple en el menú móvil */
+  .nav-menu::after {
+    content: 'CERRAR SESIÓN';
+    color: var(--danger);
+    font-size: 0.7rem;
+    font-weight: 900;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+  }
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.8rem 1rem;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.nav-link:hover, .router-link-active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.router-link-active {
+  color: #3b82f6 !important;
+  font-weight: 600;
+}
+
+.role-tag {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.role-tag.superadmin { background: #ef4444; color: #fff; }
+.role-tag.gerente { background: #3b82f6; color: #fff; }
+.role-tag.empleado { background: #10b981; color: #fff; }
+
+.btn-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin-left: 10px;
+  filter: grayscale(1);
+  transition: 0.3s;
+}
+
+.btn-logout:hover {
+  filter: grayscale(0);
+  transform: scale(1.1);
+}

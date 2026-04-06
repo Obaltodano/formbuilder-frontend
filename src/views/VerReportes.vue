@@ -1,0 +1,159 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import api from '../api/axios';
+
+// Extraemos la URL base de axios para no hardcodearla (ej. http://localhost:3000)
+// Esto toma "http://localhost:3000/api" y lo deja en "http://localhost:3000"
+const urlServidor = api.defaults.baseURL.replace('/api', '');
+
+const reportes = ref([]);
+const reporteSeleccionado = ref(null);
+const mapaSeleccionado = ref(null);
+
+onMounted(async () => {
+  try {
+    const res = await api.get('/respuestas');
+    reportes.value = res.data;
+  } catch (err) {
+    console.error("Error cargando reportes", err);
+  }
+});
+
+// NUEVA FUNCIÓN: Construye la URL de la imagen correctamente
+const obtenerUrlImagen = (ruta) => {
+  if (!ruta) return '';
+  // Convertimos barras invertidas de Windows a barras de URL
+  const rutaLimpia = ruta.replace(/\\/g, '/');
+  // Retornamos la URL completa: http://localhost:3000/uploads/...
+  return `${urlServidor}/${rutaLimpia}`;
+};
+
+const esCoordenada = (valor) => {
+  if (typeof valor !== 'string') return false;
+  return /^-?\d+\.\d+,\s*-?\d+\.\d+$/.test(valor);
+};
+
+// Modificada para detectar la carpeta 'uploads'
+// Detectar si el valor es una imagen o un conjunto de ellas
+const esFoto = (valor) => {
+  // Caso 1: Es un Array (como se ve en tu captura fotosUrl)
+  if (Array.isArray(valor)) {
+    return valor.length > 0 && valor[0].toLowerCase().includes('uploads');
+  }
+  
+  // Caso 2: Es un string simple
+  if (typeof valor !== 'string') return false;
+  const contieneCarpeta = valor.toLowerCase().includes('uploads');
+  const tieneExtension = /\.(jpg|jpeg|png|webp)$/i.test(valor);
+  return contieneCarpeta || tieneExtension;
+};
+
+const abrirDetalle = (rep) => { reporteSeleccionado.value = rep; };
+const cerrarModal = () => { reporteSeleccionado.value = null; };
+
+const obtenerEtiquetaLegible = (rep, campoId) => {
+  const campo = rep.formularioId?.campos?.find(c => c._id === campoId);
+  return campo ? (campo.label || campo.etiqueta) : campoId;
+};
+</script>
+<template>
+  <div class="reports-page">
+    <header class="section-header">
+      <h1 class="section-title">HISTORIAL DE REPORTES</h1>
+      <div class="header-stats">
+        <span class="stats-pill">{{ reportes.length }} REGISTROS</span>
+      </div>
+    </header>
+    
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th>Formulario</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="rep in reportes" :key="rep._id" class="table-row">
+            <td class="user-cell">
+              <strong>{{ rep.usuarioId?.nombre || 'Usuario' }}</strong>
+            </td>
+            <td><span class="form-badge">{{ rep.formularioId?.titulo }}</span></td>
+            <td>{{ new Date(rep.fechaEnvio).toLocaleString() }}</td>
+            <td>
+              <button @click="abrirDetalle(rep)" class="btn-view-modal">👁️ DETALLES</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div v-if="reporteSeleccionado" class="modal-overlay" @click.self="cerrarModal">
+      <div class="modal-container">
+        <header class="modal-header">
+          <h3>Detalle del Reporte</h3>
+          <button @click="cerrarModal" class="btn-close-modal">×</button>
+        </header>
+
+        <div class="modal-scroll-area">
+          <div class="report-meta">
+            <p><strong>Formulario:</strong> {{ reporteSeleccionado.formularioId?.titulo }}</p>
+            <p><strong>Enviado por:</strong> {{ reporteSeleccionado.usuarioId?.nombre }}</p>
+          </div>
+
+          <div class="data-grid-segments">
+            <div v-for="(valor, campoId) in reporteSeleccionado.datos" :key="campoId" class="data-card">
+              <span class="data-label">{{ obtenerEtiquetaLegible(reporteSeleccionado, campoId) }}</span>
+              
+            <div v-if="esFoto(valor)" class="data-content-media">
+              <template v-if="Array.isArray(valor)">
+                <div v-for="(foto, index) in valor" :key="index" class="media-group">
+                  <img 
+                    :src="obtenerUrlImagen(foto)" 
+                    class="img-preview" 
+                    alt="Evidencia" 
+                  />
+                  <a :href="obtenerUrlImagen(foto)" target="_blank" class="btn-zoom">
+                    Ver foto {{ index + 1 }} completa
+                  </a>
+                </div>
+              </template>
+
+              <template v-else>
+                <img 
+                  :src="obtenerUrlImagen(valor)" 
+                  class="img-preview" 
+                  alt="Evidencia" 
+                />
+                <a :href="obtenerUrlImagen(valor)" target="_blank" class="btn-zoom">
+                  Ver pantalla completa
+                </a>
+              </template>
+            </div>
+
+              <div v-else-if="esCoordenada(valor)" class="data-content-media">
+                <iframe 
+                  width="100%" height="180" frameborder="0"
+                  :src="`https://maps.google.com/maps?q=${valor}&z=15&output=embed`"
+                  class="mini-map-iframe">
+                </iframe>
+                <p class="coords-txt">📍 {{ valor }}</p>
+              </div>
+
+              <div v-else class="data-content-text">
+                {{ valor || 'N/A' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<style scoped>
+@import '../styles/reportes.css';
+</style>

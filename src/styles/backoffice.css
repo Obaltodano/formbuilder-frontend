@@ -1,0 +1,62 @@
+/* backoffice.css */
+.backoffice-container {
+    padding: 2rem;
+    color: #f8fafc;
+}
+
+.panel-maestro {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.card-gestion {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #94a3b8;
+}
+
+.input-back {
+    width: 100%;
+    padding: 0.75rem;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: white;
+}
+
+.btn-alta {
+    background: #3b82f6;
+    color: white;
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-alta:hover {
+    background: #2563eb;
+}
+
+.badge-empresa {
+    background: #3b82f6;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.75rem;
+}

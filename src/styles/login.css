@@ -1,0 +1,65 @@
+/* src/styles/login.css */
+/* Centrado total de la caja */
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg-main); /* Usando variable del theme.css */
+}
+
+/* Caja del formulario estilo tarjeta */
+.auth-box {
+  background: var(--bg-card);
+  padding: 3rem;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-box h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 2rem;
+  color: var(--text-main);
+  letter-spacing: -1px;
+}
+
+/* Inputs estilizados */
+.auth-input {
+  background-color: var(--bg-main);
+  border: 2px solid var(--border-color);
+  color: var(--text-main);
+  padding: 15px;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.auth-input:focus {
+  border-color: var(--primary);
+}
+
+/* Botón premium */
+.btn-login {
+  background-color: var(--primary);
+  color: white;
+  padding: 15px;
+  border-radius: var(--radius);
+  border: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+
+.btn-login:hover {
+  background-color: var(--primary-hover);
+}

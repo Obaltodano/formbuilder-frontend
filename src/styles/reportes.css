@@ -1,0 +1,311 @@
+/* src/styles/reportes.css */
+
+.reports-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Encabezado consistente con Admin */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -1px;
+}
+
+.stats-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+/* Contenedor de tabla responsivo */
+.table-container {
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow-x: auto; /* Permite scroll en móvil */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.custom-table th {
+  padding: 1rem 1.5rem;
+  background: rgba(15, 23, 42, 0.5);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--primary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.table-row {
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.2s;
+}
+
+.table-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.custom-table td {
+  padding: 1.25rem 1.5rem;
+  vertical-align: top;
+}
+
+/* Celdas específicas */
+.user-name { display: block; font-weight: 700; color: #fff; }
+.user-id-tag { font-size: 0.65rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; }
+
+.form-badge {
+  background: var(--bg-main);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+}
+
+.details-list { list-style: none; padding: 0; margin: 0; }
+.detail-item { font-size: 0.85rem; margin-bottom: 4px; }
+.detail-label { color: var(--primary); font-weight: 700; margin-right: 5px; }
+.detail-value { color: #cbd5e1; }
+
+.map-link {
+  color: #4ade80;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.date-container { display: flex; flex-direction: column; }
+.date-main { font-weight: 700; font-size: 0.85rem; }
+.date-sub { font-size: 0.7rem; color: var(--text-muted); }
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .reports-page { padding: 1rem; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .custom-table { min-width: 700px; } /* Evita que la tabla se colapse demasiado */
+}
+
+
+/* Previsualización de fotos en la tabla */
+.report-img-preview {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.report-img-preview:hover {
+  transform: scale(1.1);
+}
+
+/* Botón de mapa moderno */
+.map-btn {
+  background: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+  border: 1px solid #4ade80;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.mini-map {
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.map-toggle-btn {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.map-iframe-container {
+  margin-top: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 250px;
+}
+
+.thumb-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  margin-top: 5px;
+  transition: 0.2s;
+}
+
+.thumb-img:hover {
+  transform: scale(1.1);
+  border-color: var(--primary);
+}
+
+
+/* --- MODAL BASE --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+.modal-container {
+    background: #1e293b;
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #334155;
+}
+
+.modal-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+}
+
+.btn-close-modal {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+/* --- SEGMENTACIÓN DE DATOS --- */
+.modal-scroll-area {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.report-meta {
+    background: #0f172a;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.data-grid-segments {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.data-card {
+    background: #111827;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #374151;
+}
+
+.data-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+/* --- CONTENIDO MULTIMEDIA --- */
+.data-content-media {
+    margin-top: 10px;
+}
+
+.img-preview {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #4b5563;
+}
+
+.btn-zoom {
+    display: block;
+    text-align: center;
+    margin-top: 8px;
+    color: #60a5fa;
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.mini-map-iframe {
+    border-radius: 8px;
+    border: 1px solid #4b5563;
+}
+
+.coords-txt {
+    font-family: monospace;
+    color: #10b981;
+    margin-top: 5px;
+}
+
+.data-content-text {
+    color: #e2e8f0;
+    line-height: 1.5;
+}
+
+/* --- BOTONES TABLA --- */
+.btn-view-modal {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-view-modal:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
