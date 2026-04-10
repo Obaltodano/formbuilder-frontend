@@ -26,10 +26,10 @@ watch(() => route.path, () => {
 const logout = () => {
   sessionStorage.clear();
   localStorage.clear();
-  router.push('/'); // Usamos router para una navegación más fluida
+  router.push('/'); 
 };
 
-// Computed para simplificar el nombre del logo
+// Computed para el nombre del logo
 const brandName = computed(() => {
   if (!user.value) return 'Sistema';
   return user.value.rol === 'superadmin' ? '☁️ SuperAdmin' : user.value.empresaId;
@@ -88,6 +88,9 @@ const brandName = computed(() => {
             </router-link>
           </template>
 
+          <button @click="logout" class="nav-link logout-mobile-btn">
+            <span class="icon">🚪</span> CERRAR SESIÓN
+          </button>
         </div>
       </div>
 
@@ -109,5 +112,4 @@ const brandName = computed(() => {
 
 <style scoped>
 @import '../styles/navbar.css';
-
 </style>
