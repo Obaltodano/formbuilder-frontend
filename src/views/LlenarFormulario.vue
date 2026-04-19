@@ -96,38 +96,49 @@ const enviarReporte = async () => {
 </script>
 
 <template>
-  <div v-if="formulario" class="llenar-page">
-    <header class="form-header">
-      <h1 class="form-title">{{ formulario.titulo }}</h1>
-    </header>
+  <div class="llenar-container">
+    
+    <div v-if="formulario" class="llenar-page">
+      <header class="form-header">
+        <h1 class="form-title">{{ formulario.titulo }}</h1>
+        <span class="form-subtitle">Formulario de Reporte</span>
+      </header>
 
-    <div v-for="campo in formulario.campos" :key="campo._id" class="field-group">
-      <label class="field-label">{{ campo.label || campo.etiqueta }}</label>
+      <div v-for="campo in formulario.campos" :key="campo._id" class="field-group">
+        <label class="field-label">{{ campo.label || campo.etiqueta }}</label>
 
-      <input v-if="campo.tipo === 'texto'" 
-             v-model="respuestas[campo._id]" 
-             type="text" class="input-text" placeholder="Escribe aquí...">
-      
-      <input v-if="campo.tipo === 'numero'" 
-             v-model="respuestas[campo._id]" 
-             type="number" class="input-number">
+        <input v-if="campo.tipo === 'texto'" 
+               v-model="respuestas[campo._id]" 
+               type="text" class="input-text" placeholder="Escribe aquí...">
+        
+        <input v-if="campo.tipo === 'numero'" 
+               v-model="respuestas[campo._id]" 
+               type="number" class="input-number" placeholder="0.00">
 
-      <div v-if="campo.tipo === 'gps'">
-        <button @click="obtenerUbicacion(campo._id)" class="btn-gps">
-          {{ capturandoGps ? 'OBTENIENDO...' : '📍 CAPTURAR UBICACIÓN' }}
-        </button>
-        <p v-if="respuestas[campo._id]" class="gps-value">{{ respuestas[campo._id] }}</p>
+        <div v-if="campo.tipo === 'gps'">
+          <button @click="obtenerUbicacion(campo._id)" class="btn-gps">
+            {{ capturandoGps ? 'OBTENIENDO...' : '📍 CAPTURAR UBICACIÓN' }}
+          </button>
+          <p v-if="respuestas[campo._id]" class="gps-value">
+            Coordenadas: {{ respuestas[campo._id] }}
+          </p>
+        </div>
+
+        <div v-if="campo.tipo === 'foto'" class="input-file-container">
+          <input type="file" accept="image/*" capture="environment"
+                 @change="manejarArchivo($event, campo._id)" class="input-file">
+        </div>
       </div>
 
-      <div v-if="campo.tipo === 'foto'">
-        <input type="file" accept="image/*" capture="environment"
-               @change="manejarArchivo($event, campo._id)" class="input-file">
-      </div>
+      <button @click="enviarReporte" class="btn-submit">
+        ENVIAR REPORTE FINAL
+      </button>
     </div>
 
-    <button @click="enviarReporte" class="btn-submit">
-      ENVIAR REPORTE FINAL
-    </button>
+    <div v-else class="loader-empresa">
+      Cargando formulario...
+    </div>
+
   </div>
 </template>
 

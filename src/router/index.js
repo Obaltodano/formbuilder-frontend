@@ -3,6 +3,7 @@ import Login from '../views/Login.vue';
 import Dashboard from '../views/Dashboard.vue';
 import LlenarFormulario from '../views/LlenarFormulario.vue';
 import VerReportes from '../views/VerReportes.vue';
+import Perfil from '../views/Perfil.vue';
 
 const routes = [
   { path: '/', component: Login },
@@ -12,6 +13,12 @@ const routes = [
     path: '/dashboard', 
     component: Dashboard,
     meta: { requiresAuth: true } 
+  },
+  {
+    path: '/perfil', // <--- NUEVA RUTA
+    name: 'Perfil',
+    component: Perfil,
+    meta: { requiresAuth: true }
   },
   {
     path: '/llenar/:id',

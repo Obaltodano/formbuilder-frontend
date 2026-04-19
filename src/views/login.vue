@@ -18,6 +18,9 @@ const login = async () => {
     sessionStorage.setItem('token', res.data.token);
     sessionStorage.setItem('user', JSON.stringify(res.data.usuario));
 
+    // DISPARAR EVENTO: Esto le avisa al Navbar que debe leer el storage
+    window.dispatchEvent(new CustomEvent('usuario-actualizado'));
+
     console.log("Respuesta del servidor:", res.data);
 
     // USAMOS EL ROUTER: Esto no recarga la página, solo cambia el componente visible.

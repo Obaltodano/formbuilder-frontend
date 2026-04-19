@@ -24,19 +24,35 @@ onMounted(cargarTienda);
 </script>
 
 <template>
-  <div class="market-page">
-    <h1 class="title">Tienda de Formularios</h1>
-    <div class="template-grid">
-      <div v-for="temp in templates" :key="temp._id" class="template-card">
-        <div class="preview-placeholder">📝</div>
-        <h3>{{ temp.titulo }}</h3>
-        <p>{{ temp.descripcion }}</p>
-        <div class="card-footer">
-          <span class="badge">{{ temp.categoria }}</span>
-          <button @click="instalar(temp._id)" class="btn-download">
-            📥 INSTALAR
-          </button>
+  <div class="market-container">
+    <div class="market-page">
+      <header class="market-header">
+        <h1 class="title">Tienda de Formularios</h1>
+        <p class="subtitle">Explora e instala plantillas prediseñadas para tu equipo</p>
+      </header>
+
+      <div v-if="templates.length > 0" class="template-grid">
+        <div v-for="temp in templates" :key="temp._id" class="template-card">
+          <div class="card-header">
+             <div class="preview-icon">📝</div>
+             <span class="badge">{{ temp.categoria }}</span>
+          </div>
+          
+          <div class="card-body">
+            <h3>{{ temp.titulo }}</h3>
+            <p>{{ temp.descripcion }}</p>
+          </div>
+
+          <div class="card-footer">
+            <button @click="instalar(temp._id)" class="btn-download">
+              <span class="icon">📥</span> INSTALAR
+            </button>
+          </div>
         </div>
+      </div>
+
+      <div v-else class="market-empty">
+        <p>Cargando plantillas disponibles...</p>
       </div>
     </div>
   </div>

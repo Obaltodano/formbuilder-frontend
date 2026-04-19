@@ -1,38 +1,128 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.market-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center; /* Centra el contenido en PC */
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+}
+
+.market-page {
+    width: 100%;
+    max-width: 1200px; /* Ancho máximo igual a tus otras secciones */
+}
+
+.market-header {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.title {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+/* --- GRID DE TARJETAS --- */
 .template-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
 }
+
 .template-card {
-  background: #1e293b;
-  border-radius: 12px;
-  padding: 15px;
-  border: 1px solid #334155;
-  transition: transform 0.2s;
+    background: #1e293b; /* Fondo azul oscuro coherente */
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
-.template-card:hover { transform: translateY(-5px); }
+
+.template-card:hover {
+    transform: translateY(-8px);
+    border-color: #3b82f6;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* --- ELEMENTOS INTERNOS --- */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.preview-icon {
+    font-size: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.badge {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.card-body h3 {
+    color: #f8fafc;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.card-body p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    flex-grow: 1; /* Hace que todas las tarjetas tengan el mismo alto */
+}
+
+/* --- BOTÓN DE INSTALACIÓN --- */
 .btn-download {
-  background: #10b981;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
+    width: 100%;
+    background: #10b981; /* Verde esmeralda para acciones positivas */
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
 }
 
-.user-role-tag.backoffice {
-    background: #ef4444; /* Rojo para el jefe máximo */
-    color: white;
+.btn-download:hover {
+    background: #059669;
+    transform: scale(1.02);
 }
 
-.user-role-tag.gerente {
-    background: #3b82f6; /* Azul para gerentes */
-    color: white;
-}
-
-.user-role-tag.empleado {
-    background: #10b981; /* Verde para empleados */
-    color: white;
+/* --- RESPONSIVE --- */
+@media (max-width: 640px) {
+    .template-grid {
+        grid-template-columns: 1fr; /* Una columna en móviles */
+    }
+    
+    .title {
+        font-size: 1.5rem;
+    }
 }

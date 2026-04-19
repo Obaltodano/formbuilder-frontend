@@ -65,63 +65,95 @@ const registrarEmpresa = async () => {
 
 <template>
   <div class="backoffice-container">
-    <header class="header-maestro">
-      <h1>Backoffice Maestro</h1>
-      <p>Gestión global de empresas y recursos del Marketplace</p>
-    </header>
-
-    <div class="panel-maestro">
+    <div class="backoffice-content">
       
-      <section class="card-gestion">
-        <div class="card-header">
-          <span class="icon">🛒</span>
-          <h2>Nueva Plantilla para Marketplace</h2>
+      <header class="header-maestro">
+        <div class="header-info">
+          <span class="badge-master">MODO SUPERADMIN</span>
+          <h1>Backoffice Maestro</h1>
+          <p>Gestión global de empresas y recursos del Marketplace</p>
         </div>
-        
-        <div class="form-group">
-          <input v-model="nuevoForm.titulo" placeholder="Título del Formulario (ej: Check-list Diario)" class="input-back" />
-          <select v-model="nuevoForm.categoria" class="input-back">
-            <option v-for="cat in categorias" :key="cat" :value="cat">{{ cat }}</option>
-          </select>
-          <textarea v-model="nuevoForm.descripcion" placeholder="Descripción para el Gerente..." class="input-back"></textarea>
-        </div>
-        
-        <div class="constructor-campos">
-          <p class="label-tiny">CONSTRUCTOR DE FORMULARIO</p>
-          <div class="toolbar">
-            <button @click="agregarCampo('texto')" class="btn-tool">📝 Texto</button>
-            <button @click="agregarCampo('foto')" class="btn-tool">📷 Foto</button>
-            <button @click="agregarCampo('gps')" class="btn-tool">📍 GPS</button>
-          </div>
+      </header>
 
-          <div class="preview-lista">
-            <div v-for="(campo, i) in nuevoForm.campos" :key="campo._id" class="item-campo">
-              <span><strong>{{ campo.tipo.toUpperCase() }}:</strong> {{ campo.etiqueta }}</span>
-              <button @click="eliminarCampo(i)" class="btn-del">×</button>
+      <div class="panel-maestro">
+        
+        <section class="card-gestion">
+          <div class="card-header">
+            <div class="icon-circle">🛒</div>
+            <div>
+              <h2>Nueva Plantilla Marketplace</h2>
+              <p class="card-desc">Crea formularios base para la tienda virtual.</p>
             </div>
           </div>
-        </div>
+          
+          <div class="form-group">
+            <label class="label-tiny">DATOS DE LA PLANTILLA</label>
+            <input v-model="nuevoForm.titulo" placeholder="Título (ej: Auditoría de Seguridad)" class="input-back" />
+            
+            <select v-model="nuevoForm.categoria" class="input-back">
+              <option disabled value="">Seleccionar Categoría</option>
+              <option v-for="cat in categorias" :key="cat" :value="cat">{{ cat }}</option>
+            </select>
+            
+            <textarea v-model="nuevoForm.descripcion" placeholder="Descripción que verá el gerente al comprar..." class="input-back" rows="3"></textarea>
+          </div>
+          
+          <div class="constructor-box">
+            <p class="label-tiny">HERRAMIENTAS DE DISEÑO</p>
+            <div class="toolbar-master">
+              <button @click="agregarCampo('texto')" class="btn-tool"><span>📝</span> Texto</button>
+              <button @click="agregarCampo('foto')" class="btn-tool"><span>📷</span> Foto</button>
+              <button @click="agregarCampo('gps')" class="btn-tool"><span>📍</span> GPS</button>
+            </div>
 
-        <button @click="publicarPlantilla" class="btn-alta">PUBLICAR EN TIENDA VIRTUAL</button>
-      </section>
+            <div class="preview-lista-master">
+              <div v-if="nuevoForm.campos.length === 0" class="empty-fields">
+                No hay campos agregados aún
+              </div>
+              <div v-for="(campo, i) in nuevoForm.campos" :key="i" class="item-campo-master">
+                <div class="campo-info">
+                  <span class="campo-type">{{ campo.tipo }}</span>
+                  <input v-model="campo.etiqueta" placeholder="Nombre de la pregunta..." class="input-inline" />
+                </div>
+                <button @click="eliminarCampo(i)" class="btn-del-master">×</button>
+              </div>
+            </div>
+          </div>
 
-      <section class="card-gestion">
-        <div class="card-header">
-          <span class="icon">🏢</span>
-          <h2>Alta de Nueva Empresa</h2>
-        </div>
-        <p class="desc">Crea el acceso principal para un nuevo cliente (Gerente).</p>
-        
-        <div class="form-group">
-          <input v-model="nuevaEmpresa.empresaId" placeholder="ID Único Empresa (ej: EMPRESA_A)" class="input-back" />
-          <input v-model="nuevaEmpresa.nombre" placeholder="Nombre del Gerente" class="input-back" />
-          <input v-model="nuevaEmpresa.email" type="email" placeholder="Correo Electrónico" class="input-back" />
-          <input v-model="nuevaEmpresa.password" type="password" placeholder="Contraseña de Acceso" class="input-back" />
-        </div>
-        
-        <button @click="registrarEmpresa" class="btn-alta secondary">REGISTRAR EMPRESA</button>
-      </section>
+          <button @click="publicarPlantilla" class="btn-alta">
+            <span>🌍</span> PUBLICAR EN TIENDA VIRTUAL
+          </button>
+        </section>
 
+        <section class="card-gestion">
+          <div class="card-header">
+            <div class="icon-circle secondary">🏢</div>
+            <div>
+              <h2>Alta de Nueva Empresa</h2>
+              <p class="card-desc">Registra un nuevo cliente corporativo.</p>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="label-tiny">CONFIGURACIÓN DE CUENTA</label>
+            <input v-model="nuevaEmpresa.empresaId" placeholder="ID Único (ej: COCA_COLA_MX)" class="input-back bold" />
+            
+            <label class="label-tiny">DATOS DEL GERENTE ADMIN</label>
+            <input v-model="nuevaEmpresa.nombre" placeholder="Nombre completo" class="input-back" />
+            <input v-model="nuevaEmpresa.email" type="email" placeholder="Correo electrónico" class="input-back" />
+            <input v-model="nuevaEmpresa.password" type="password" placeholder="Contraseña inicial" class="input-back" />
+          </div>
+          
+          <div class="info-box">
+            <p>⚠️ Al registrar, se creará automáticamente el entorno privado para esta empresa.</p>
+          </div>
+          
+          <button @click="registrarEmpresa" class="btn-alta btn-secondary">
+             REGISTRAR EMPRESA
+          </button>
+        </section>
+
+      </div>
     </div>
   </div>
 </template>

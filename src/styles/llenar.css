@@ -1,95 +1,157 @@
 /* src/styles/llenar.css */
-.llenar-page {
-  padding: 1.5rem;
-  max-width: 600px;
-  margin: 2rem auto;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
+
+/* 1. EL CONTENEDOR ES LA CLAVE PARA EL CENTRADO */
+.llenar-container {
+    min-height: calc(100vh - 70px); /* Ajusta según el alto de tu navbar */
+    display: flex;
+    align-items: center;    /* Centrado vertical */
+    justify-content: center; /* Centrado horizontal (Arregla lo de image_1b14a1.png) */
+    padding: 2rem 1rem;
+    background-color: var(--bg-main);
+    box-sizing: border-box;
 }
 
+/* 2. LA TARJETA (Mantiene el ancho de app móvil) */
+.llenar-page {
+    width: 100%;
+    max-width: 480px; /* Ancho ideal para que parezca un teléfono en PC */
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 28px;
+    padding: 2.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* 3. ENCABEZADO */
 .form-header {
-  margin-bottom: 2rem;
-  text-align: center;
+    margin-bottom: 2.5rem;
+    text-align: center;
 }
 
 .form-title {
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: white;
-  text-transform: uppercase;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    margin: 0;
 }
 
+/* 4. GRUPOS DE CAMPOS */
 .field-group {
-  margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
 }
 
 .field-label {
-  display: block;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  text-transform: uppercase;
+    display: block;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.6rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
+/* 5. INPUTS (Estilo Empresa_B) */
 .input-text, .input-number {
-  width: 100%;
-  background: var(--bg-main);
-  border: 1px solid var(--border-color);
-  padding: 12px 15px;
-  border-radius: 10px;
-  color: white;
-  outline: none;
-  transition: border-color 0.3s;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    padding: 14px 18px;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .input-text:focus {
-  border-color: var(--primary);
+    border-color: var(--primary);
+    background: rgba(30, 41, 59, 0.8);
 }
 
+/* 6. BOTÓN GPS (Verde Esmeralda) */
 .btn-gps {
-  width: 100%;
-  background: #10b981; /* Verde esmeralda */
-  color: white;
-  padding: 12px;
-  border-radius: 10px;
-  font-weight: 800;
-  cursor: pointer;
-  border: none;
+    width: 100%;
+    background: #10b981; 
+    color: white;
+    padding: 16px;
+    border-radius: 14px;
+    font-weight: 900;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+.btn-gps:hover {
+    background: #059669;
+    transform: translateY(-2px);
 }
 
 .gps-value {
-  margin-top: 8px;
-  font-family: monospace;
-  color: #4ade80;
-  font-size: 0.8rem;
-  text-align: center;
+    margin-top: 10px;
+    font-family: monospace;
+    color: #4ade80;
+    font-size: 0.8rem;
+    text-align: center;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 8px;
+    border-radius: 8px;
 }
 
-.input-file {
-  background: var(--bg-main);
-  padding: 10px;
-  border-radius: 10px;
-  width: 100%;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
+/* 7. BOTÓN ENVIAR FINAL */
 .btn-submit {
-  width: 100%;
-  background: var(--primary);
-  color: white;
-  padding: 18px;
-  border-radius: 15px;
-  font-weight: 900;
-  font-size: 1.1rem;
-  cursor: pointer;
-  border: none;
-  margin-top: 1rem;
-  transition: transform 0.2s;
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    padding: 20px;
+    border-radius: 18px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border: none;
+    margin-top: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+}
+
+.btn-submit:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.1);
 }
 
 .btn-submit:active {
-  transform: scale(0.95);
+    transform: scale(0.96);
+}
+
+/* 8. RESPONSIVE (Móvil Full Screen) */
+@media (max-width: 500px) {
+    .llenar-container {
+        padding: 0;
+        align-items: flex-start; /* En móvil empieza desde arriba */
+    }
+
+    .llenar-page {
+        border-radius: 0;
+        min-height: 100vh;
+        max-width: 100%;
+        padding: 3rem 1.5rem;
+        border: none;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

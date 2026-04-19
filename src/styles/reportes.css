@@ -1,311 +1,331 @@
 /* src/styles/reportes.css */
 
-.reports-page {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+/* --- 1. CONTENEDOR PRINCIPAL (Centrado Absoluto) --- */
+.reports-container {
+    width: 100%;
+    min-height: calc(100vh - 80px); /* Ajuste por el Navbar */
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    box-sizing: border-box;
+    background-color: var(--bg-main); /* #0f172a */
 }
 
-/* Encabezado consistente con Admin */
+.reports-page {
+    width: 100%;
+    max-width: 1400px; /* Alineado con el Navbar y Marketplace */
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* --- 2. ENCABEZADO --- */
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
 }
 
 .section-title {
-  font-size: 1.5rem;
-  font-weight: 900;
-  font-style: italic;
-  letter-spacing: -1px;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #ffffff;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -1px;
 }
 
 .stats-pill {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--primary);
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--primary); /* #3b82f6 */
+    letter-spacing: 1px;
 }
 
-/* Contenedor de tabla responsivo */
+/* --- 3. TABLA DE REPORTES --- */
 .table-container {
-  background: var(--bg-card);
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  overflow-x: auto; /* Permite scroll en móvil */
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    background: #1e293b;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden; /* Mantiene los bordes redondeados */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .custom-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
 }
 
-.custom-table th {
-  padding: 1rem 1.5rem;
-  background: rgba(15, 23, 42, 0.5);
-  font-size: 0.75rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  color: var(--primary);
-  border-bottom: 2px solid var(--border-color);
+.custom-table th,
+.custom-table td {
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--primary);
+    border-bottom: 2px solid var(--border-color);
+    letter-spacing: 1px;
 }
+
+/* Asignamos pesos a las columnas para que se expandan proporcionalmente */
+.custom-table th:nth-child(1), .custom-table td:nth-child(1) { width: 30%; } /* Empleado */
+.custom-table th:nth-child(2), .custom-table td:nth-child(2) { width: 25%; } /* Formulario */
+.custom-table th:nth-child(3), .custom-table td:nth-child(3) { width: 25%; } /* Fecha */
+.custom-table th:nth-child(4), .custom-table td:nth-child(4) { width: 20%; text-align: center; } /* Botón */
 
 .table-row {
-  border-bottom: 1px solid var(--border-color);
-  transition: background 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
 }
 
 .table-row:hover {
-  background: rgba(255, 255, 255, 0.02);
+    background: rgba(59, 130, 246, 0.04);
 }
 
 .custom-table td {
-  padding: 1.25rem 1.5rem;
-  vertical-align: top;
+    padding: 1.25rem 1.5rem;
+    color: #cbd5e1;
+    font-size: 0.9rem;
 }
 
-/* Celdas específicas */
-.user-name { display: block; font-weight: 700; color: #fff; }
-.user-id-tag { font-size: 0.65rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; }
+/* Celdas especiales */
+.user-info-table {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 800;
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+.user-id-tag {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+}
 
 .form-badge {
-  background: var(--bg-main);
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.6);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid var(--border-color);
+    color: #fff;
 }
 
-.details-list { list-style: none; padding: 0; margin: 0; }
-.detail-item { font-size: 0.85rem; margin-bottom: 4px; }
-.detail-label { color: var(--primary); font-weight: 700; margin-right: 5px; }
-.detail-value { color: #cbd5e1; }
-
-.map-link {
-  color: #4ade80;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 0.8rem;
+.date-container {
+    display: flex;
+    flex-direction: column;
 }
 
-.date-container { display: flex; flex-direction: column; }
-.date-main { font-weight: 700; font-size: 0.85rem; }
-.date-sub { font-size: 0.7rem; color: var(--text-muted); }
+.date-main { font-weight: 700; color: #f8fafc; }
+.date-sub { font-size: 0.7rem; color: #64748b; }
 
-/* Responsividad */
-@media (max-width: 768px) {
-  .reports-page { padding: 1rem; }
-  .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .custom-table { min-width: 700px; } /* Evita que la tabla se colapse demasiado */
+/* --- 4. BOTONES --- */
+.btn-view-modal {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-
-/* Previsualización de fotos en la tabla */
-.report-img-preview {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  transition: transform 0.2s;
+.btn-view-modal:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
 }
 
-.report-img-preview:hover {
-  transform: scale(1.1);
-}
-
-/* Botón de mapa moderno */
-.map-btn {
-  background: rgba(74, 222, 128, 0.1);
-  color: #4ade80;
-  border: 1px solid #4ade80;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.mini-map {
-  margin-top: 10px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-}
-
-.map-toggle-btn {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  cursor: pointer;
-  margin-top: 4px;
-}
-
-.map-iframe-container {
-  margin-top: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  overflow: hidden;
-  max-width: 250px;
-}
-
-.thumb-img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  margin-top: 5px;
-  transition: 0.2s;
-}
-
-.thumb-img:hover {
-  transform: scale(1.1);
-  border-color: var(--primary);
-}
-
-
-/* --- MODAL BASE --- */
+/* --- 5. MODAL DE DETALLES --- */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    backdrop-filter: blur(4px);
 }
 
 .modal-container {
     background: #1e293b;
-    width: 90%;
-    max-width: 700px;
+    width: 95%;
+    max-width: 750px;
     max-height: 85vh;
-    border-radius: 16px;
+    border-radius: 24px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    border: 1px solid #334155;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
 }
 
 .modal-header {
-    padding: 20px;
+    padding: 1.5rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #334155;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+.modal-header h3 { font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
 .btn-close-modal {
-    background: none;
+    background: rgba(255, 255, 255, 0.05);
     border: none;
     color: #94a3b8;
-    font-size: 2rem;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     cursor: pointer;
+    transition: 0.2s;
 }
 
-/* --- SEGMENTACIÓN DE DATOS --- */
+.btn-close-modal:hover { background: #ef4444; color: white; }
+
+/* --- 6. CONTENIDO DEL MODAL --- */
 .modal-scroll-area {
-    padding: 20px;
+    padding: 2rem;
     overflow-y: auto;
 }
 
 .report-meta {
-    background: #0f172a;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 0.9rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    background: rgba(15, 23, 42, 0.4);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.meta-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 5px;
+    text-transform: uppercase;
 }
 
 .data-grid-segments {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 1.5rem;
 }
 
 .data-card {
-    background: #111827;
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #374151;
+    background: #0f172a;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .data-label {
     display: block;
     font-size: 0.7rem;
-    font-weight: 800;
-    color: #3b82f6;
+    font-weight: 900;
+    color: var(--primary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    margin-bottom: 1rem;
 }
 
-/* --- CONTENIDO MULTIMEDIA --- */
-.data-content-media {
-    margin-top: 10px;
-}
-
+/* Media y GPS */
 .img-preview {
     width: 100%;
-    max-height: 350px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #4b5563;
-}
-
-.btn-zoom {
-    display: block;
-    text-align: center;
-    margin-top: 8px;
-    color: #60a5fa;
-    font-size: 0.8rem;
-    text-decoration: none;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
 }
 
 .mini-map-iframe {
-    border-radius: 8px;
-    border: 1px solid #4b5563;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .coords-txt {
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: #10b981;
-    margin-top: 5px;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 10px;
 }
 
-.data-content-text {
-    color: #e2e8f0;
-    line-height: 1.5;
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+    .reports-container { padding: 1rem 0.5rem; }
+    .section-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .custom-table th:nth-child(3), .custom-table td:nth-child(3) { display: none; }
+    .report-meta { grid-template-columns: 1fr; }
+    
+/* --- AJUSTES DE CELDAS PARA MÓVIL --- */
+.custom-table td {
+    padding: 1rem; /* Reducimos un poco el padding lateral */
+    vertical-align: middle;
 }
 
-/* --- BOTONES TABLA --- */
+.user-info-table {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 100px; /* Evita que el nombre se comprima demasiado */
+}
+
+/* Ajuste del Botón para que no se corte */
 .btn-view-modal {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
+    padding: 8px 12px; /* Más compacto en móvil */
+    font-size: 0.7rem;
+    white-space: nowrap; /* Evita que el texto salte de línea */
+    justify-content: center;
+    width: fit-content;
 }
 
-.btn-view-modal:hover {
-    background: #2563eb;
-    transform: translateY(-2px);
+    .section-title {
+        font-size: 1.4rem; /* Título un poco más pequeño */
+    }
+
+    .user-name {
+        font-size: 0.85rem;
+    }
+
+    /* Hacemos que la tabla permita scroll si algo falla */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    /* Ajuste de los badges de formulario */
+    .form-badge {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+    }
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
