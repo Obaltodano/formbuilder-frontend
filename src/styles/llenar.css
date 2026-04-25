@@ -1,157 +1,272 @@
 /* src/styles/llenar.css */
 
-/* 1. EL CONTENEDOR ES LA CLAVE PARA EL CENTRADO */
 .llenar-container {
-    min-height: calc(100vh - 70px); /* Ajusta según el alto de tu navbar */
+    min-height: 100vh;
     display: flex;
-    align-items: center;    /* Centrado vertical */
-    justify-content: center; /* Centrado horizontal (Arregla lo de image_1b14a1.png) */
+    justify-content: center;
     padding: 2rem 1rem;
-    background-color: var(--bg-main);
-    box-sizing: border-box;
+    background-color: #0f172a;
 }
 
-/* 2. LA TARJETA (Mantiene el ancho de app móvil) */
 .llenar-page {
     width: 100%;
-    max-width: 480px; /* Ancho ideal para que parezca un teléfono en PC */
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 28px;
-    padding: 2.5rem;
+    max-width: 500px;
+    background: #1e293b;
+    border-radius: 24px;
+    padding: 2rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    box-sizing: border-box;
-    animation: fadeIn 0.4s ease-out;
 }
 
-/* 3. ENCABEZADO */
 .form-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
     text-align: center;
 }
 
 .form-title {
-    font-size: 2.2rem;
-    font-weight: 900;
+    font-size: 1.8rem;
+    font-weight: 800;
     color: white;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-    margin: 0;
+    margin-bottom: 5px;
 }
 
-/* 4. GRUPOS DE CAMPOS */
-.field-group {
-    margin-bottom: 1.8rem;
-}
+.form-subtitle { color: #94a3b8; font-size: 0.9rem; }
+
+.field-group { margin-bottom: 2rem; }
 
 .field-label {
     display: block;
-    font-weight: 800;
-    color: var(--primary);
-    margin-bottom: 0.6rem;
-    font-size: 0.75rem;
+    font-weight: 700;
+    color: #3b82f6;
+    margin-bottom: 0.8rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
-/* 5. INPUTS (Estilo Empresa_B) */
-.input-text, .input-number {
+.req-star { color: #ef4444; margin-left: 4px; }
+
+/* Inputs Estilizados */
+.input-text, .input-number, .input-select, .input-area {
     width: 100%;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid var(--border-color);
-    padding: 14px 18px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    padding: 14px;
     border-radius: 12px;
     color: white;
     font-size: 1rem;
     outline: none;
-    transition: all 0.3s ease;
     box-sizing: border-box;
 }
 
-.input-text:focus {
-    border-color: var(--primary);
-    background: rgba(30, 41, 59, 0.8);
+.input-area { min-height: 100px; resize: none; }
+
+/* Opciones Radio y Check */
+.options-view { display: flex; flex-direction: column; gap: 10px; }
+.radio-item, .check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #0f172a;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
 }
 
-/* 6. BOTÓN GPS (Verde Esmeralda) */
-.btn-gps {
-    width: 100%;
-    background: #10b981; 
-    color: white;
-    padding: 16px;
-    border-radius: 14px;
-    font-weight: 900;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
+/* Escala Lineal */
+.escala-view {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0f172a;
+    padding: 15px;
+    border-radius: 15px;
+}
+.escala-options { display: flex; gap: 8px; }
+.escala-item input { display: none; }
+.escala-dot {
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    text-transform: uppercase;
-    transition: all 0.2s ease;
+    background: #1e293b;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.escala-item input:checked + .escala-dot {
+    background: #3b82f6;
+    transform: scale(1.1);
+}
+.escala-num { color: #64748b; font-weight: bold; }
+
+/* Cuadrículas (Grids) */
+.grid-view-container {
+    background: #0f172a;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #334155;
+}
+.grid-scroll { overflow-x: auto; }
+.grid-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+    font-size: 0.85rem;
+}
+.grid-table th, .grid-table td { padding: 12px; border: 1px solid #1e293b; text-align: center; }
+.fila-label { text-align: left !important; background: #1e293b; font-weight: bold; min-width: 100px; }
+
+/* Multimedia y GPS */
+.file-zone { position: relative; }
+.input-file-hidden { display: none; }
+.file-label-btn {
+    display: block;
+    background: #334155;
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px dashed #475569;
 }
 
-.btn-gps:hover {
-    background: #059669;
-    transform: translateY(-2px);
+.btn-gps {
+    width: 100%;
+    background: #10b981;
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
 }
 
 .gps-value {
-    margin-top: 10px;
-    font-family: monospace;
-    color: #4ade80;
+    margin-top: 8px;
+    color: #10b981;
     font-size: 0.8rem;
     text-align: center;
     background: rgba(16, 185, 129, 0.1);
-    padding: 8px;
-    border-radius: 8px;
+    padding: 5px;
+    border-radius: 5px;
 }
 
-/* 7. BOTÓN ENVIAR FINAL */
+/* Botón Enviar */
 .btn-submit {
     width: 100%;
-    background: var(--primary);
+    background: #3b82f6;
     color: white;
-    padding: 20px;
-    border-radius: 18px;
-    font-weight: 900;
+    padding: 18px;
+    border-radius: 15px;
+    font-weight: 800;
     font-size: 1.1rem;
-    cursor: pointer;
     border: none;
-    margin-top: 2rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    margin-top: 1rem;
+    cursor: pointer;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
 }
 
-.btn-submit:hover {
-    transform: translateY(-3px);
-    filter: brightness(1.1);
-}
-
-.btn-submit:active {
-    transform: scale(0.96);
-}
-
-/* 8. RESPONSIVE (Móvil Full Screen) */
 @media (max-width: 500px) {
-    .llenar-container {
-        padding: 0;
-        align-items: flex-start; /* En móvil empieza desde arriba */
-    }
-
-    .llenar-page {
-        border-radius: 0;
-        min-height: 100vh;
-        max-width: 100%;
-        padding: 3rem 1.5rem;
-        border: none;
-    }
+    .llenar-container { padding: 0; }
+    .llenar-page { border-radius: 0; min-height: 100vh; }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Botones de Cámara y Video */
+.btn-camera, .btn-video, .btn-file {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    background: #334155;
+    color: white;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 800;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-camera { background: #6366f1; } /* Índigo */
+.btn-video { background: #f43f5e; }  /* Rosa/Rojo */
+
+.btn-success {
+    background: #10b981 !important; /* Esmeralda */
+    border-color: #34d399;
+}
+
+.file-name {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-align: center;
+}
+
+/* Modal de Cámara */
+.camera-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.camera-content {
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.video-stream {
+    width: 100%;
+    border-radius: 20px;
+    border: 3px solid #3b82f6;
+    background: black;
+}
+
+.camera-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn-shutter {
+    width: 70px; height: 70px;
+    background: white;
+    border: 5px solid #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: #ef4444;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+}
+
+/* Ajustes para Cuadrículas */
+.grid-table input[type="radio"], 
+.grid-table input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.mini-preview {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-top: 10px;
+    border: 2px solid #3b82f6;
 }
