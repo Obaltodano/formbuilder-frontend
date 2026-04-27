@@ -1,0 +1,48 @@
+/* src/components/campos/TextoLargo/TextoLargo.css */
+
+.texto-largo-wrapper {
+    width: 100%;
+    display: flex;
+}
+
+.input-area {
+    width: 100%;
+    /* SOLUCIÓN AL DESBORDAMIENTO: Incluye padding en el 100% */
+    box-sizing: border-box; 
+    min-height: 140px;
+    padding: 14px 16px;
+    border: 2px solid #334155;
+    border-radius: 10px;
+    background-color: #0f172a; /* Fondo oscuro consistente con el resto del form */
+    color: #f8fafc;
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.6;
+    transition: all 0.25s ease;
+    outline: none;
+    resize: vertical; /* Permite estirar hacia abajo, no hacia los lados */
+    display: block;
+}
+
+.input-area:focus {
+    border-color: #6366f1;
+    background-color: #020617;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.input-area::placeholder {
+    color: #475569;
+}
+
+/* Estilo para el reporte (Vista de Resultados) */
+.reporte-parrafo {
+    font-size: 0.95rem;
+    color: #f1f5f9;
+    white-space: pre-wrap; /* Mantiene los párrafos del usuario */
+    word-break: break-word;
+    line-height: 1.6;
+    background: #0f172a;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #6366f1; /* Detalle visual para diferenciar comentarios */
+}

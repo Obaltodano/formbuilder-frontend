@@ -1,0 +1,53 @@
+/* src/components/campos/CuadriculaUnica/CuadriculaUnica.css */
+.grid-container {
+    width: 100%;
+    overflow-x: auto; /* Scroll horizontal en móviles */
+    border-radius: 8px;
+    border: 1px solid #334155;
+}
+
+.grid-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    color: #f1f5f9;
+    font-size: 0.9rem;
+}
+
+.grid-table th, .grid-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #334155;
+}
+
+.grid-table th {
+    background: #0f172a;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.fila-label {
+    text-align: left !important;
+    font-weight: 500;
+    min-width: 150px;
+    background: #1e293b;
+}
+
+.grid-radio {
+    width: 18px;
+    height: 18px;
+    accent-color: #6366f1;
+    cursor: pointer;
+}
+
+/* Estilo para el reporte */
+.reporte-grid-item {
+    margin-bottom: 5px;
+    padding: 4px 8px;
+    background: #334155;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.reporte-grid-key { color: #94a3b8; margin-right: 5px; }
+.reporte-grid-val { color: #818cf8; font-weight: bold; }

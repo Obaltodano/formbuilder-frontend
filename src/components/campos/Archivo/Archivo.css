@@ -1,0 +1,66 @@
+/* src/components/campos/Archivo/Archivo.css */
+.archivo-field-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-file-hidden {
+    display: none;
+}
+
+.btn-file {
+    padding: 14px;
+    background: #475569;
+    color: white;
+    border: 2px dashed #94a3b8;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-file:hover {
+    background: #334155;
+    border-color: #cbd5e1;
+}
+
+.btn-file.has-file {
+    background: #059669;
+    border-style: solid;
+    border-color: #10b981;
+}
+
+.file-info-badge {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    background: #1e293b;
+    padding: 5px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Estilo para el reporte */
+.report-file-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f1f5f9;
+    color: #1e293b;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    border: 1px solid #cbd5e1;
+}
+
+.report-file-link:hover {
+    background: #e2e8f0;
+}

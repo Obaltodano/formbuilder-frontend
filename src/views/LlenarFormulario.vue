@@ -2,23 +2,22 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../api/axios';
+import CampoRender from '../components/campos/CampoRender.vue';
 
 const route = useRoute();
 const router = useRouter();
 const formulario = ref(null);
 const respuestas = ref({});
-const capturandoGps = ref(false);
 const user = ref(null); 
 const archivos = ref({}); 
 const previews = ref({}); 
 
-// --- LÓGICA DE MULTIMEDIA (CÁMARA Y VIDEO PRO) ---
+// --- LÓGICA DE MULTIMEDIA ---
 const showMediaModal = ref(false);
-const mediaType = ref(''); // 'foto' o 'video'
+const mediaType = ref('');
 const videoRef = ref(null);
 const canvasRef = ref(null);
 const activeCampoId = ref(null);
-
 let streamInstance = null;
 let mediaRecorder = null;
 const isRecording = ref(false);
@@ -32,11 +31,11 @@ onMounted(async () => {
     const res = await api.get(`/formularios/${route.params.id}`);
     formulario.value = res.data;
     
-    // Inicialización de estructura de respuestas según tipo de campo
+    // Inicialización de respuestas con validación de tipo
     formulario.value.campos.forEach(campo => {
-      if (campo.tipo === 'multiple' || campo.tipo === 'cuadricula_casilla') {
+      if (campo.tipo === 'multiple' || campo.tipo === 'cuadricula_multiple') {
         respuestas.value[campo._id] = []; 
-      } else if (campo.tipo === 'cuadricula_opcion') {
+      } else if (campo.tipo === 'cuadricula_unica') {
         respuestas.value[campo._id] = {}; 
       } else if (campo.tipo === 'escala') {
         respuestas.value[campo._id] = campo.escalaConfig?.min || 1;
@@ -49,10 +48,7 @@ onMounted(async () => {
   }
 });
 
-/**
- * GESTIÓN DE CÁMARA Y VIDEO (PC Y MÓVIL)
- */
-const abrirMedia = async (id, tipo) => {
+const abrirMedia = async ({ id, tipo }) => {
   activeCampoId.value = id;
   mediaType.value = tipo;
   showMediaModal.value = true;
@@ -63,12 +59,11 @@ const abrirMedia = async (id, tipo) => {
     });
     if (videoRef.value) videoRef.value.srcObject = streamInstance;
   } catch (err) {
-    alert("Error de acceso a periféricos. Verifica los permisos.");
+    alert("Acceso a cámara denegado.");
     showMediaModal.value = false;
   }
 };
 
-// Captura de Foto
 const tomarFoto = () => {
   const video = videoRef.value;
   const canvas = canvasRef.value;
@@ -82,7 +77,6 @@ const tomarFoto = () => {
   }, 'image/jpeg', 0.8);
 };
 
-// Grabación de Video
 const iniciarGrabacion = () => {
   recordedChunks.value = [];
   mediaRecorder = new MediaRecorder(streamInstance);
@@ -104,9 +98,13 @@ const detenerGrabacion = () => {
 const procesarArchivoFinal = (blob, fileName, type) => {
   const file = new File([blob], fileName, { type });
   const id = activeCampoId.value;
+  
+  // Guardamos el archivo para el FormData
   archivos.value[id] = file;
-  respuestas.value[id] = `Captura: ${fileName}`;
-  if (previews.value[id]) URL.revokeObjectURL(previews.value[id]);
+  
+  // IMPORTANTE: Limpiamos el texto para que no se envíe "Captura: ..."
+  respuestas.value[id] = ""; 
+  
   previews.value[id] = URL.createObjectURL(file);
 };
 
@@ -116,57 +114,45 @@ const cerrarMedia = () => {
   isRecording.value = false;
 };
 
-/**
- * OTROS EVENTOS (ARCHIVOS Y GPS)
- */
-const abrirCapturadorDoc = (id) => {
-  const input = document.getElementById('input-file-' + id);
-  if (input) input.click();
-};
-
-const manejarArchivo = (event, id) => {
-  const archivo = event.target.files[0];
-  if (archivo) {
-    archivos.value[id] = archivo;
-    respuestas.value[id] = archivo.name;
-    previews.value[id] = null;
-  }
-};
-
-const obtenerUbicacion = (id) => {
-  capturandoGps.value = true;
-  navigator.geolocation.getCurrentPosition((pos) => {
-    respuestas.value[id] = `${pos.coords.latitude}, ${pos.coords.longitude}`;
-    capturandoGps.value = false;
-  }, () => { 
-    alert("Habilita el GPS para continuar");
-    capturandoGps.value = false; 
-  });
-};
-
 const enviarReporte = async () => {
-  if (!user.value?.empresaId) return alert("Error de sesión.");
+  if (!user.value?.empresaId) return alert("Sesión inválida.");
 
   try {
     const formData = new FormData();
-    formData.append('empresaId', user.value.empresaId);
-    formData.append('nombreEmpleado', user.value.nombre);
-    formData.append('nombreFormulario', formulario.value.titulo);
-    formData.append('formularioId', formulario.value._id);
-    formData.append('datos', JSON.stringify(respuestas.value));
+    const datosFinales = {}; // Aquí guardaremos con los nombres legibles
 
-    Object.keys(archivos.value).forEach(key => {
-      formData.append('archivo', archivos.value[key]);
+    // Recorremos los campos del formulario para construir el objeto final
+    formulario.value.campos.forEach(campo => {
+      // Obtenemos el valor usando el _id que usa el v-model
+      const valor = respuestas.value[campo._id];
+      
+      // IMPORTANTE: Usamos campo.label como llave para evitar el 'undefined'
+      // Si el valor es null o undefined, enviamos un string vacío
+      datosFinales[campo.label] = (valor !== undefined && valor !== null) ? valor : "";
+
+      // Si hay un archivo (foto/video) asociado a este campo por su ID
+      if (archivos.value[campo._id]) {
+        // Adjuntamos el archivo usando el label como nombre del campo para Multer
+        formData.append(campo.label, archivos.value[campo._id]);
+      }
     });
+
+    formData.append('empresaId', user.value.empresaId);
+    formData.append('usuarioId', user.value.id || user.value._id);
+    formData.append('formularioId', formulario.value._id);
+    formData.append('nombreFormulario', formulario.value.titulo);
+    
+    // Enviamos el JSON de respuestas ya mapeado con los nombres de los campos
+    formData.append('datos', JSON.stringify(datosFinales));
 
     await api.post('/respuestas', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-    
-    alert("🚀 ¡Reporte enviado con éxito!");
+
+    alert("🚀 Reporte enviado con éxito");
     router.push('/dashboard');
   } catch (error) {
-    console.error(error);
+    console.error("Error al enviar:", error);
     alert("Error al enviar el reporte.");
   }
 };
@@ -177,144 +163,63 @@ const enviarReporte = async () => {
     <div v-if="formulario" class="llenar-page">
       <header class="form-header">
         <h1 class="form-title">{{ formulario.titulo }}</h1>
-        <span class="form-subtitle">Completa los campos requeridos</span>
+        <p class="form-subtitle">Complete la información solicitada abajo</p>
       </header>
 
-      <div v-for="campo in formulario.campos" :key="campo._id" class="field-group">
-        <label class="field-label">
-          {{ campo.label || campo.etiqueta }}
-          <span v-if="campo.requerido" class="req-star">*</span>
-        </label>
-
-        <input v-if="['texto_corto', 'email', 'numero'].includes(campo.tipo)" 
-               v-model="respuestas[campo._id]" :type="campo.tipo === 'numero' ? 'number' : 'text'" 
-               class="input-text" placeholder="Respuesta...">
-
-        <textarea v-if="campo.tipo === 'texto_largo'" v-model="respuestas[campo._id]" class="input-area"></textarea>
-
-        <div v-if="campo.tipo === 'radio'" class="options-view">
-          <label v-for="opc in campo.opciones" :key="opc" class="radio-item">
-            <input type="radio" :name="campo._id" :value="opc" v-model="respuestas[campo._id]">
-            <span>{{ opc }}</span>
+      <div class="form-body form-grid">
+        <div v-for="campo in formulario.campos" 
+             :key="campo._id" 
+             class="field-card-fill"
+             :class="{'full-width': campo.tipo.includes('cuadricula') || campo.tipo === 'texto_largo'}">
+          
+          <label class="field-label">
+            {{ campo.label }}
+            <span v-if="campo.requerido" class="req-star">*</span>
           </label>
-        </div>
 
-        <div v-if="campo.tipo === 'multiple'" class="options-view">
-          <label v-for="opc in campo.opciones" :key="opc" class="check-item">
-            <input type="checkbox" :value="opc" v-model="respuestas[campo._id]">
-            <span>{{ opc }}</span>
-          </label>
-        </div>
-
-        <select v-if="campo.tipo === 'dropdown'" v-model="respuestas[campo._id]" class="input-select">
-          <option value="" disabled>Seleccione una opción</option>
-          <option v-for="opc in campo.opciones" :key="opc" :value="opc">{{ opc }}</option>
-        </select>
-
-        <div v-if="campo.tipo === 'escala'" class="escala-view">
-          <span class="escala-num">{{ campo.escalaConfig?.min || 1 }}</span>
-          <div class="escala-options">
-            <label v-for="n in (campo.escalaConfig?.max - campo.escalaConfig?.min + 1)" :key="n" class="escala-item">
-              <input type="radio" :name="campo._id" :value="n + (campo.escalaConfig?.min - 1)" v-model="respuestas[campo._id]">
-              <div class="escala-dot">{{ n + (campo.escalaConfig?.min - 1) }}</div>
-            </label>
+          <CampoRender 
+            :campo="campo"
+            :id="campo._id"
+            v-model="respuestas[campo._id]"
+            @solicitarCamara="abrirMedia"
+          />
+          
+          <div v-if="previews[campo._id]" class="media-preview-container">
+            <img v-if="campo.tipo === 'foto'" :src="previews[campo._id]" class="mini-preview" />
+            <div v-if="campo.tipo === 'video'" class="video-preview-wrapper">
+              <video :src="previews[campo._id]" controls class="mini-preview" />
+            </div>
           </div>
-          <span class="escala-num">{{ campo.escalaConfig?.max || 5 }}</span>
-        </div>
-
-        <div v-if="['cuadricula_opcion', 'cuadricula_casilla'].includes(campo.tipo)" class="grid-view-container">
-          <div class="grid-scroll">
-            <table class="grid-table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th v-for="col in campo.columnas" :key="col">{{ col }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="fila in campo.filas" :key="fila">
-                  <td class="fila-label">{{ fila }}</td>
-                  <td v-for="col in campo.columnas" :key="col">
-                    <input v-if="campo.tipo === 'cuadricula_opcion'" 
-                           type="radio" :name="campo._id + fila" :value="col" v-model="respuestas[campo._id][fila]">
-                    <input v-if="campo.tipo === 'cuadricula_casilla'" 
-                           type="checkbox" :value="fila + '|' + col" v-model="respuestas[campo._id]">
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div v-if="campo.tipo === 'gps'">
-          <button @click="obtenerUbicacion(campo._id)" class="btn-gps" type="button">
-            {{ capturandoGps ? '📍 LOCALIZANDO...' : '📍 CAPTURAR UBICACIÓN' }}
-          </button>
-          <p v-if="respuestas[campo._id]" class="gps-value">{{ respuestas[campo._id] }}</p>
-        </div>
-
-        <div v-if="campo.tipo === 'foto'" class="media-zone">
-          <button @click="abrirMedia(campo._id, 'foto')" type="button" class="btn-camera" :class="{ 'btn-success': respuestas[campo._id] }">
-            {{ respuestas[campo._id] ? '📸 CAMBIAR FOTO' : '📷 TOMAR FOTO' }}
-          </button>
-          <div v-if="previews[campo._id]" class="preview-box">
-            <img :src="previews[campo._id]" class="mini-preview">
-          </div>
-        </div>
-
-        <div v-if="campo.tipo === 'video'" class="media-zone">
-          <button @click="abrirMedia(campo._id, 'video')" type="button" class="btn-video" :class="{ 'btn-success': respuestas[campo._id] }">
-            {{ respuestas[campo._id] ? '🎥 CAMBIAR VIDEO' : '📹 GRABAR VIDEO' }}
-          </button>
-          <div v-if="previews[campo._id]" class="preview-box">
-            <video :src="previews[campo._id]" controls class="mini-preview"></video>
-          </div>
-        </div>
-
-        <div v-if="campo.tipo === 'archivo'" class="file-zone">
-          <input type="file" :id="'input-file-'+campo._id" class="input-file-hidden" @change="manejarArchivo($event, campo._id)">
-          <button @click="abrirCapturadorDoc(campo._id)" type="button" class="btn-file">
-            {{ respuestas[campo._id] ? '📎 ' + respuestas[campo._id] : '📁 ADJUNTAR ARCHIVO' }}
-          </button>
         </div>
       </div>
 
-      <button @click="enviarReporte" class="btn-submit">ENVIAR REPORTE FINAL</button>
+      <button @click="enviarReporte" class="btn-submit-form">
+        ENVIAR REPORTE FINAL
+      </button>
     </div>
-    <div v-else class="loader-empresa">Cargando formulario...</div>
   </div>
 
-  <div v-if="showMediaModal" class="camera-modal">
-    <div class="camera-content">
-      <video ref="videoRef" autoplay playsinline class="video-stream" :muted="mediaType === 'foto'"></video>
-      <canvas ref="canvasRef" style="display:none;"></canvas>
-      <div class="camera-actions">
-        <button @click="cerrarMedia" class="btn-close-cam">CANCELAR</button>
-        
-        <button v-if="mediaType === 'foto'" @click="tomarFoto" class="btn-shutter">CAPTURAR</button>
-        
-        <button v-if="mediaType === 'video'" 
-                @click="isRecording ? detenerGrabacion() : iniciarGrabacion()" 
-                class="btn-shutter" :class="{ 'recording': isRecording }">
-          {{ isRecording ? '⏹ STOP' : '⏺ REC' }}
-        </button>
+  <Teleport to="body">
+    <div v-if="showMediaModal" class="camera-modal">
+      <div class="camera-content">
+        <video ref="videoRef" autoplay playsinline class="video-stream"></video>
+        <canvas ref="canvasRef" style="display:none;"></canvas>
+        <div class="camera-actions">
+          <button @click="cerrarMedia" class="btn-cancel-cam">✕</button>
+          <button v-if="mediaType === 'foto'" @click="tomarFoto" class="btn-shutter">
+            <div class="inner-shutter"></div>
+          </button>
+          <button v-if="mediaType === 'video'" 
+                  @click="isRecording ? detenerGrabacion() : iniciarGrabacion()" 
+                  class="btn-shutter" :class="{ 'is-recording': isRecording }">
+            <div class="inner-shutter" :class="isRecording ? 'rect' : 'circle'"></div>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>
 @import '../styles/llenar.css';
-
-/* Estilos adicionales para la grabación */
-.recording {
-  background: #ef4444 !important;
-  border-color: #fff !important;
-  animation: pulse 1.5s infinite;
-}
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
 </style>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.197:3000/api'
+  baseURL: 'http://localhost:3000/api'
 });
 
 // INTERCEPTOR DE PETICIÓN: Para enviar el token

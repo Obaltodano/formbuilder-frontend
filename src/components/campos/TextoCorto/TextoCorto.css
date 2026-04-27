@@ -1,0 +1,45 @@
+/* src/components/campos/TextoCorto/TextoCorto.css */
+
+.texto-corto-wrapper {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
+.input-corto {
+    width: 100%; /* Ocupa el ancho total del padre */
+    box-sizing: border-box; /* ¡ESTO SOLUCIONA EL DESBORDAMIENTO! */
+    padding: 12px 16px;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    background-color: #0f172a; /* Fondo más oscuro para mejor contraste */
+    color: #f8fafc;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    outline: none;
+    display: block;
+}
+
+.input-corto:focus {
+    border-color: #6366f1;
+    background-color: #020617; /* Se oscurece al enfocar */
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.input-corto::placeholder {
+    color: #475569;
+}
+
+/* Estilo para la vista de reportes/resultados */
+.reporte-texto {
+    font-size: 0.95rem;
+    color: #f1f5f9;
+    word-break: break-word;
+    line-height: 1.5;
+    padding: 4px 0;
+}
+
+.reporte-vacio {
+    color: #475569;
+    font-style: italic;
+}

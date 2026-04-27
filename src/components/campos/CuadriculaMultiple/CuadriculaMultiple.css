@@ -1,0 +1,71 @@
+/* src/components/campos/CuadriculaMultiple/CuadriculaMultiple.css */
+.grid-multiple-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.grid-multiple-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    color: #f1f5f9;
+}
+
+.grid-multiple-table th, .grid-multiple-table td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid #334155;
+}
+
+.grid-multiple-table th {
+    background: #0f172a;
+    color: #10b981; /* Color distintivo para múltiple */
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.fila-label {
+    text-align: left !important;
+    font-weight: 600;
+    min-width: 160px;
+    background: #1e293b;
+    border-right: 2px solid #334155;
+}
+
+.grid-checkbox {
+    width: 20px;
+    height: 20px;
+    accent-color: #10b981;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.grid-checkbox:active { transform: scale(1.2); }
+
+/* Reporte */
+.reporte-grid-multiple-row {
+    margin-bottom: 12px;
+    padding: 8px;
+    border-left: 3px solid #10b981;
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.tag-multiple {
+    background: #064e3b;
+    color: #34d399;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    border: 1px solid #065f46;
+}

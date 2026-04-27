@@ -1,0 +1,38 @@
+/* src/components/campos/Dropdown/Dropdown.css */
+.dropdown-field-wrapper {
+    width: 100%;
+}
+
+.input-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    background-color: #1e293b;
+    color: #f8fafc;
+    font-size: 1rem;
+    appearance: none; /* Quita el estilo nativo para mayor control */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.input-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+/* Estilo para el reporte */
+.reporte-dropdown-value {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #1e293b;
+    border-left: 4px solid #6366f1;
+    color: #f1f5f9;
+    border-radius: 4px;
+    font-weight: 500;
+}

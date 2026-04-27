@@ -1,0 +1,55 @@
+/* src/components/campos/GPS/GPS.css */
+.gps-field-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-gps {
+    padding: 14px;
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-gps:hover { background: #0284c7; }
+.btn-gps.success { background: #10b981; }
+
+.gps-display {
+    padding: 10px;
+    background: #1e293b;
+    border-radius: 8px;
+    border: 1px border #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gps-value {
+    color: #38bdf8;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+/* Estilo para el reporte */
+.report-gps-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #38bdf8;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.report-gps-link:hover {
+    text-decoration: underline;
+}

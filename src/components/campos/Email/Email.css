@@ -1,0 +1,60 @@
+/* src/components/campos/Email/Email.css */
+
+.email-field-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.input-email {
+    width: 100%;
+    /* La propiedad mágica para que no se salga del borde */
+    box-sizing: border-box; 
+    padding: 12px 16px;
+    background-color: #0f172a; /* Fondo más oscuro para contraste */
+    border: 2px solid #334155;
+    border-radius: 10px;
+    color: #f1f5f9;
+    font-size: 1rem;
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+/* Efecto al seleccionar el campo */
+.input-email:focus {
+    border-color: #3b82f6;
+    background-color: #020617;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* Estado de Error: Borde rojo y brillo suave */
+.input-email.input-error {
+    border-color: #ef4444;
+}
+
+.input-email.input-error:focus {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+}
+
+/* Estado de Éxito: Borde verde */
+.input-email.input-success {
+    border-color: #10b981;
+}
+
+/* Texto de error debajo del input */
+.error-message {
+    color: #f87171;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 6px;
+    margin-left: 4px;
+}
+
+/* Animación simple para el mensaje de error */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s;
+}
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+}

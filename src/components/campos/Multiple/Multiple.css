@@ -1,0 +1,56 @@
+/* src/components/campos/Multiple/Multiple.css */
+.multiple-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.check-item:hover {
+    border-color: #475569;
+}
+
+.check-item.active {
+    border-color: #10b981; /* Verde para diferenciar de la selección única */
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.check-item input[type="checkbox"] {
+    accent-color: #10b981;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.check-label {
+    color: #f1f5f9;
+    font-size: 1rem;
+}
+
+/* Estilo para el reporte */
+.reporte-multiple-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.reporte-multiple-tag {
+    padding: 4px 10px;
+    background: #10b981;
+    color: white;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}

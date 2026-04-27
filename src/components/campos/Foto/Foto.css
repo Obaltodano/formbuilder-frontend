@@ -1,0 +1,87 @@
+/* src/components/campos/Foto/Foto.css */
+.foto-field-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-foto {
+    padding: 14px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-foto:hover { background: #4f46e5; }
+.btn-foto.success { background: #10b981; }
+
+.preview-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #334155;
+    background: #1e293b;
+}
+
+.img-preview {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Estilo para el Reporte */
+.report-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid #475569;
+}
+
+/* Copiamos los mismos estilos base de InputVideo para consistencia */
+.foto-field-wrapper { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+
+.btn-foto {
+  width: 100%; padding: 16px; border-radius: 10px; border: 2px dashed #334155;
+  background: #1e293b; color: #94a3b8; cursor: pointer; transition: all 0.3s ease;
+  font-weight: 600;
+}
+.btn-foto:hover { border-color: #38bdf8; color: white; }
+
+.btn-foto.success {
+  border-style: solid; border-color: #22c55e; color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.btn-content { display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+.preview-container {
+  position: relative; border-radius: 12px; overflow: hidden;
+  background: #000; border: 1px solid #334155;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.preview-badge {
+  position: absolute; top: 10px; left: 10px;
+  background: #38bdf8; color: white; font-size: 11px; font-weight: bold;
+  padding: 3px 9px; border-radius: 4px; z-index: 5;
+}
+
+.img-preview {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
+}
+
+.fade-preview-enter-active, .fade-preview-leave-active { transition: opacity 0.4s ease, transform 0.4s ease; }
+.fade-preview-enter-from, .fade-preview-leave-to { opacity: 0; transform: translateY(10px); }
