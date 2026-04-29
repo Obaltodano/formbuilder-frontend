@@ -262,21 +262,194 @@ input:focus, textarea:focus {
 
 /* --- ANIMACIONES Y RESPONSIVO --- */
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 @media (max-width: 600px) {
-    .llenar-container { 
-        padding: 0; 
-    }
-    .llenar-page { 
-        border-radius: 0; 
-        padding: 20px 15px; 
-        min-height: 100vh; 
-    }
-    .form-title {
-        font-size: 1.5rem;
-    }
+.llenar-container { 
+padding: 0; 
+}
+.llenar-page { 
+border-radius: 0; 
+padding: 20px 15px; 
+min-height: 100vh; 
+}
+.form-title {
+font-size: 1.5rem;
+}
+}
+
+/* MÓVILES PEQUEÑOS (menos de 480px) */
+@media (max-width: 480px) {
+.llenar-container { 
+padding: 0; 
+}
+.llenar-page { 
+border-radius: 0; 
+padding: 15px 12px; 
+min-height: 100vh; 
+}
+.form-header {
+margin-bottom: 20px;
+}
+.form-title {
+font-size: 1.25rem;
+line-height: 1.3;
+}
+.form-subtitle {
+font-size: 0.8rem;
+}
+/* Cards más compactas */
+.field-card-fill {
+padding: 12px;
+border-radius: 10px;
+}
+.field-label {
+font-size: 0.8rem;
+margin-bottom: 8px;
+}
+/* Inputs más compactos */
+input, textarea, select {
+padding: 10px;
+font-size: 16px; /* Previene zoom en iOS Safari */
+border-radius: 6px;
+}
+textarea {
+min-height: 80px;
+}
+/* Tablas de cuadrícula más pequeñas */
+.grid-table th, .grid-table td {
+padding: 8px 6px;
+font-size: 0.85rem;
+}
+.fila-label {
+min-width: 100px;
+font-size: 0.8rem;
+}
+/* Botón de envío más grande para fácil toque */
+.btn-submit-form {
+padding: 16px;
+font-size: 1rem;
+margin-top: 20px;
+min-height: 56px; /* Área de toque mínima recomendada */
+}
+/* Previews más pequeñas */
+.mini-preview {
+max-height: 250px;
+}
+/* Modal cámara ajustes */
+.camera-actions {
+bottom: 20px;
+}
+.btn-shutter {
+width: 65px;
+height: 65px;
+border-width: 3px;
+}
+.inner-shutter {
+width: 45px;
+height: 45px;
+}
+.inner-shutter.rect {
+width: 28px;
+height: 28px;
+}
+.btn-cancel-cam {
+width: 44px;
+height: 44px;
+font-size: 1.2rem;
+}
+}
+
+/* TABLETS (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+.llenar-container {
+padding: 10px;
+}
+.llenar-page {
+border-radius: 12px;
+padding: 20px;
+}
+.form-title {
+font-size: 1.5rem;
+}
+/* En tablet, el grid es de 1 columna por defecto */
+.form-grid {
+grid-template-columns: 1fr;
+}
+.full-width {
+grid-column: span 1;
+}
+}
+
+/* MÓVILES MUY PEQUEÑOS (menos de 360px) */
+@media (max-width: 360px) {
+.form-title {
+font-size: 1.1rem;
+}
+.field-card-fill {
+padding: 10px;
+}
+.grid-table th, .grid-table td {
+padding: 6px 4px;
+font-size: 0.75rem;
+}
+.fila-label {
+min-width: 80px;
+}
+}
+
+/* ORIENTACIÓN HORIZONTAL EN MÓVILES */
+@media (max-height: 500px) and (orientation: landscape) {
+.llenar-container {
+padding: 10px;
+}
+.llenar-page {
+min-height: auto;
+}
+.camera-modal {
+position: fixed;
+}
+.camera-actions {
+bottom: 15px;
+}
+.btn-shutter {
+width: 55px;
+height: 55px;
+}
+.inner-shutter {
+width: 40px;
+height: 40px;
+}
+}
+
+/* MEJORAS DE ACCESIBILIDAD TÁCTIL */
+@media (pointer: coarse) {
+/* Aumentar áreas de toque en dispositivos táctiles */
+input[type="radio"],
+input[type="checkbox"] {
+min-width: 24px;
+min-height: 24px;
+}
+/* Feedback táctil en botones */
+.btn-submit-form:active {
+transform: scale(0.98);
+}
+select {
+min-height: 44px;
+}
+}
+
+/* PREFERS REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+.btn-submit-form,
+.media-preview-container,
+.btn-shutter {
+transition: none;
+}
+.btn-shutter.is-recording {
+animation: none;
+}
 }

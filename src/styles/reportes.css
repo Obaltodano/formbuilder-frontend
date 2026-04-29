@@ -113,9 +113,113 @@
 .meta-value { color: #f8fafc; font-weight: 700; font-size: 0.9rem; }
 
 /* --- RESPONSIVE --- */
-@media (max-width: 600px) {
-    .reports-container { padding: 10px; }
-    .custom-table th:nth-child(3), .custom-table td:nth-child(3) { display: none; }
-    .report-meta { grid-template-columns: 1fr; }
-    .modal-container { height: 100vh; max-height: 100vh; border-radius: 0; }
+@media (max-width: 768px) {
+    .reports-container { 
+        padding: 10px; 
+    }
+    
+    .reports-page {
+        max-width: 100%;
+    }
+    
+    /* Tabla: Ocultar columna de fecha en tablets y móviles */
+    .custom-table th:nth-child(3), 
+    .custom-table td:nth-child(3) { 
+        display: none; 
+    }
+    
+    /* Reducir padding de celdas */
+    .custom-table th, 
+    .custom-table td {
+        padding: 0.8rem;
+    }
+    
+    .report-meta { 
+        grid-template-columns: 1fr; 
+    }
+    
+    .modal-container { 
+        width: 100%;
+        height: 100vh; 
+        max-height: 100vh; 
+        border-radius: 0; 
+    }
+    
+    .modal-scroll-area {
+        padding: 16px;
+    }
+    
+    .data-card {
+        padding: 15px;
+    }
+}
+
+/* ⭐ Móviles pequeños (menos de 480px) */
+@media (max-width: 480px) {
+    .reports-container { 
+        padding: 5px; 
+    }
+    
+    /* Tabla: Hacer scroll horizontal más pequeño */
+    .table-container {
+        border-radius: 10px;
+    }
+    
+    .custom-table th, 
+    .custom-table td {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Reducir texto de usuario */
+    .user-name {
+        font-size: 0.9rem;
+    }
+    
+    .user-id-tag {
+        font-size: 0.6rem;
+    }
+    
+    /* Botón de ver detalles más compacto */
+    .btn-view-modal {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    /* Título del modal más pequeño */
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    /* Cards de datos más compactas */
+    .data-card {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .data-label {
+        font-size: 0.7rem;
+    }
+    
+    /* Meta información más compacta */
+    .report-meta {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .meta-value {
+        font-size: 0.85rem;
+    }
+}
+
+/* ⭐ Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal-container {
+        max-height: 95vh;
+        border-radius: 12px;
+    }
+    
+    .modal-scroll-area {
+        max-height: calc(95vh - 60px);
+    }
 }

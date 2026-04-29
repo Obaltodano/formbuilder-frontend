@@ -1,9 +1,13 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import './styles/theme.css'
+import './styles/main.css'
 import App from './App.vue'
-import router from './router' // Importamos la carpeta /router/index.js que creamos
+import router from './router'
+import { pinia } from './stores'
 
 const app = createApp(App)
 
-app.use(router) // Le decimos a la app que use el sistema de rutas
+app.use(pinia)
+app.use(router)
 app.mount('#app')

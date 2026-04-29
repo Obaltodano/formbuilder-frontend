@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onUnmounted } from 'vue';
-// Importamos el mismo modal compartido
-import CameraModal from '../CameraModal.vue'; 
+import CameraModal from '../CameraModal.vue';
+import MediaPreview from '../../shared/MediaPreview.vue';
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
@@ -10,14 +10,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'archivoCapturado']);
 
-const localPreview = ref(null);
+const localFile = ref(null);
 const showCamera = ref(false);
 
 // Recibe la foto desde CameraModal
 const alCapturarFoto = (file) => {
-  if (localPreview.value) URL.revokeObjectURL(localPreview.value);
-  
-  localPreview.value = URL.createObjectURL(file);
+  localFile.value = file;
   
   // Notificamos texto al v-model
   emit('update:modelValue', `Foto capturada: ${file.name}`);
@@ -28,8 +26,18 @@ const alCapturarFoto = (file) => {
   showCamera.value = false;
 };
 
+const handleRemovePhoto = () => {
+  localFile.value = null;
+  emit('update:modelValue', '');
+  emit('archivoCapturado', { id: props.id, file: null });
+};
+
+const handlePreviewClick = (url) => {
+  window.open(url, '_blank');
+};
+
 onUnmounted(() => {
-  if (localPreview.value) URL.revokeObjectURL(localPreview.value);
+  if (localFile.value) URL.revokeObjectURL(localFile.value);
 });
 </script>
 
@@ -47,12 +55,15 @@ onUnmounted(() => {
       </div>
     </button>
 
-    <transition name="fade-preview">
-      <div v-if="localPreview" class="preview-container">
-        <div class="preview-badge">FOTO CAPTURADA</div>
-        <img :src="localPreview" class="img-preview" />
-      </div>
-    </transition>
+    <MediaPreview 
+      v-if="localFile"
+      :file="localFile"
+      type="foto"
+      size="medium"
+      removable
+      @remove="handleRemovePhoto"
+      @click="handlePreviewClick"
+    />
 
     <CameraModal 
       v-if="showCamera"

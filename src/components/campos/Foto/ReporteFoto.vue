@@ -1,4 +1,6 @@
 <script setup>
+import LazyMediaPreview from '../../shared/LazyMediaPreview.vue';
+
 // 'valor' suele ser la URL que viene de la base de datos (S3, Cloudinary, o tu servidor)
 const props = defineProps(['valor']);
 
@@ -9,16 +11,15 @@ const verImagenGrande = () => {
 
 <template>
   <div class="reporte-foto-box">
-    <div v-if="valor" class="image-wrapper">
-      <img 
-        :src="valor" 
-        alt="Evidencia" 
-        class="report-image"
-        @click="verImagenGrande"
-        title="Click para ampliar"
-      />
-    </div>
-    <span v-else style="color: #64748b; font-style: italic;">Sin imagen</span>
+    <LazyMediaPreview 
+      v-if="valor"
+      :src="valor"
+      type="foto"
+      size="large"
+      alt="Evidencia"
+      @click="verImagenGrande"
+    />
+    <span v-else class="no-media-text">Sin imagen</span>
   </div>
 </template>
 

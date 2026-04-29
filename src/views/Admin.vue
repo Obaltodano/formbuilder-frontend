@@ -78,6 +78,7 @@ const eliminarFormulario = async (id) => {
     <section v-if="pestaña === 'constructor'" class="builder-container">
       <Constructor 
         :datosEdicion="formularioSeleccionado" 
+        modo="admin"
         @finalizado="finalizarGuardado"
       />
     </section>

@@ -1,10 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import api from '../api/axios';
 // Importamos nuestro renderizador dinámico de configuración
 import CampoConfigRender from '../components/campos/CampoConfigRender.vue';
 
-const props = defineProps(['datosEdicion']);
+const props = defineProps(['datosEdicion', 'modo']); // modo: 'admin' | 'marketplace'
 const emit = defineEmits(['finalizado']);
 
 // ESTADOS
@@ -13,11 +13,28 @@ const tituloFormulario = ref('');
 const campos = ref([]);
 const campoSeleccionado = ref(null);
 
+// ⭐ Campos extra para marketplace
+const descripcionFormulario = ref('');
+const categoriaFormulario = ref('');
+const precioFormulario = ref(0);
+const esPublico = ref(true);
+
+const esModoMarketplace = computed(() => props.modo === 'marketplace');
+
 // Inicializar si estamos editando
 onMounted(() => {
   if (props.datosEdicion) {
     idEditando.value = props.datosEdicion._id;
     tituloFormulario.value = props.datosEdicion.titulo;
+    
+    // ⭐ Cargar campos extra si es marketplace
+    if (esModoMarketplace.value) {
+      descripcionFormulario.value = props.datosEdicion.descripcion || '';
+      categoriaFormulario.value = props.datosEdicion.categoria || '';
+      precioFormulario.value = props.datosEdicion.precio || 0;
+      esPublico.value = props.datosEdicion.esPublico !== false;
+    }
+    
     // Adaptamos los datos que vienen de la DB al formato de nuestros nuevos componentes
     campos.value = props.datosEdicion.campos.map(c => ({
       ...c,
@@ -62,16 +79,35 @@ const eliminarCampo = (id) => {
 const guardarFormulario = async () => {
   if (!tituloFormulario.value.trim()) return alert("⚠️ Título obligatorio");
   
+  // ⭐ Validaciones extra para marketplace
+  if (esModoMarketplace.value) {
+    if (!descripcionFormulario.value.trim()) return alert("⚠️ Descripción obligatoria para marketplace");
+    if (!categoriaFormulario.value.trim()) return alert("⚠️ Categoría obligatoria para marketplace");
+  }
+  
   try {
     const payload = {
       titulo: tituloFormulario.value,
       campos: campos.value
     };
+    
+    // ⭐ Agregar campos extra si es marketplace
+    if (esModoMarketplace.value) {
+      payload.descripcion = descripcionFormulario.value;
+      payload.categoria = categoriaFormulario.value;
+      payload.precio = precioFormulario.value;
+      payload.esPublico = esPublico.value;
+    }
 
+    // ⭐ Endpoint dinámico según modo
+    const endpoint = esModoMarketplace.value 
+      ? '/backoffice/market/subir' 
+      : '/formularios';
+    
     if (idEditando.value) {
-      await api.put(`/formularios/${idEditando.value}`, payload);
+      await api.put(`${endpoint}/${idEditando.value}`, payload);
     } else {
-      await api.post('/formularios', payload);
+      await api.post(endpoint, payload);
     }
     alert("🚀 ¡Guardado con éxito!");
     emit('finalizado');
@@ -116,6 +152,32 @@ const guardarFormulario = async () => {
     <main class="diseno-area">
       <div class="work-header">
         <input v-model="tituloFormulario" placeholder="Título del Formulario..." class="title-input">
+        
+        <!-- ⭐ Campos extra para marketplace -->
+        <div v-if="esModoMarketplace" class="marketplace-fields">
+          <input 
+            v-model="descripcionFormulario" 
+            placeholder="Descripción de la plantilla..." 
+            class="title-input"
+          >
+          <input 
+            v-model="categoriaFormulario" 
+            placeholder="Categoría (ej: Auditoría, Ventas, Seguridad)" 
+            class="title-input"
+          >
+          <div class="marketplace-row">
+            <input 
+              v-model.number="precioFormulario" 
+              type="number" 
+              placeholder="Precio (0 = gratuito)" 
+              class="title-input price-input"
+            >
+            <label class="checkbox-label">
+              <input type="checkbox" v-model="esPublico">
+              Público en tienda
+            </label>
+          </div>
+        </div>
       </div>
 
       <div class="fields-list">
@@ -142,7 +204,9 @@ const guardarFormulario = async () => {
       </div>
 
       <div class="builder-actions">
-        <button @click="guardarFormulario" class="btn-save">GUARDAR FORMULARIO</button>
+        <button @click="guardarFormulario" class="btn-save">
+          {{ esModoMarketplace ? 'PUBLICAR EN MARKETPLACE' : 'GUARDAR FORMULARIO' }}
+        </button>
       </div>
     </main>
 

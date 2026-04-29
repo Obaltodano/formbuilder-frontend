@@ -5,6 +5,12 @@ import LlenarFormulario from '../views/LlenarFormulario.vue';
 import VerReportes from '../views/VerReportes.vue';
 import Perfil from '../views/Perfil.vue';
 
+// Nuevos componentes SaaS
+import SuperAdminDashboard from '../views/admin/SuperAdminDashboard.vue';
+import GerenteDashboard from '../views/gerente/GerenteDashboard.vue';
+import UsuarioApp from '../views/usuario/UsuarioApp.vue';
+import UnifiedFormBuilder from '../components/builder/UnifiedFormBuilder.vue';
+
 const routes = [
   { path: '/', component: Login },
   
@@ -15,7 +21,7 @@ const routes = [
     meta: { requiresAuth: true } 
   },
   {
-    path: '/perfil', // <--- NUEVA RUTA
+    path: '/perfil',
     name: 'Perfil',
     component: Perfil,
     meta: { requiresAuth: true }
@@ -53,13 +59,30 @@ const routes = [
   // --- RUTAS EXCLUSIVAS DEL SUPERADMIN (Antes Backoffice) ---
   { 
     path: '/superadmin-dashboard', 
-    component: () => import('../views/BackofficeDashboard.vue'),
+    component: SuperAdminDashboard,
     meta: { requiresAuth: true, role: 'superadmin' } 
   },
   { 
     path: '/superadmin-reportes', 
     component: () => import('../views/BackofficeReportes.vue'),
     meta: { requiresAuth: true, role: 'superadmin' } 
+  },
+
+  // --- NUEVAS RUTAS SaaS ---
+  {
+    path: '/gerente-dashboard',
+    component: GerenteDashboard,
+    meta: { requiresAuth: true, role: 'gerente' }
+  },
+  {
+    path: '/app',
+    component: UsuarioApp,
+    meta: { requiresAuth: true, role: 'usuario' }
+  },
+  {
+    path: '/constructor',
+    component: UnifiedFormBuilder,
+    meta: { requiresAuth: true }
   }
 ];
 

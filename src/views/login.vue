@@ -9,10 +9,17 @@ const password = ref('');
 
 const login = async () => {
   try {
+    console.log('🔑 Intentando login con:', { 
+      email: email.value, 
+      password: password.value ? '***' : '(vacía)'
+    });
+    
     const res = await api.post('/auth/login', { 
       email: email.value, 
       password: password.value 
     });
+    
+    console.log('✅ Login exitoso:', res.data);
 
     // Guardamos en sessionStorage para que sea temporal por pestaña
     sessionStorage.setItem('token', res.data.token);
@@ -31,7 +38,14 @@ const login = async () => {
     }
 
   } catch (err) {
-    const msg = err.response?.data?.msg || "Error de conexión";
+    console.error('❌ Error completo:', err);
+    console.error('❌ Response data:', err.response?.data);
+    console.error('❌ Status:', err.response?.status);
+    
+    const msg = err.response?.data?.msg || 
+                err.response?.data?.error || 
+                err.message || 
+                "Error de conexión";
     alert("Error al entrar: " + msg);
   }
 };

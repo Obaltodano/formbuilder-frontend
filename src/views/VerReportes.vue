@@ -1,18 +1,25 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import api from '../api/axios.js';
 import * as ReportesCampos from '../components/campos/index.js';
+import { useRespuestas, BASE_URL } from '@/composables/useRespuestas';
 
-const reportes = ref([]);
+const { 
+  respuestas: reportes, 
+  loading, 
+  fetchRespuestas, 
+  getFileUrl, 
+  extractFilesFromRespuesta,
+  renderValue 
+} = useRespuestas();
+
 const reporteSeleccionado = ref(null);
 
-// Base para archivos multimedia
-const urlServidor = api.defaults.baseURL.replace('/api', '');
+// ⭐ Base para archivos multimedia - usar helper del composable
+const urlServidor = BASE_URL;
 
 onMounted(async () => {
   try {
-    const res = await api.get('/respuestas');
-    reportes.value = res.data;
+    await fetchRespuestas();
   } catch (err) {
     console.error("Error cargando reportes", err);
   }
@@ -23,6 +30,12 @@ const obtenerConfigCampo = (rep, campoId) => {
   const campoConfig = rep.formularioId?.campos?.find(c => c._id === campoId);
   return campoConfig || { label: campoId, tipo: 'texto_corto' };
 };
+
+// ⭐ Helper para obtener URL completa de archivo usando el composable
+const getFullFileUrl = (relativePath) => getFileUrl(relativePath);
+
+// ⭐ Extraer archivos de una respuesta usando el composable
+const getFilesFromResponse = (respuesta) => extractFilesFromRespuesta(respuesta);
 
 const obtenerComponenteReporte = (tipo) => {
   const mapa = {

@@ -1,16 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import api from '../api/axios';
-
-// --- ESTADO PARA MARKETPLACE ---
-const nuevoForm = ref({
-  titulo: '',
-  descripcion: '',
-  categoria: 'Seguridad', // Por defecto
-  campos: []
-});
-
-const categorias = ['Seguridad', 'Inventario', 'Ventas', 'Limpieza', 'Mantenimiento'];
+import Constructor from './Constructor.vue';
 
 // --- ESTADO PARA GESTIÓN DE EMPRESAS ---
 const nuevaEmpresa = ref({
@@ -20,37 +11,20 @@ const nuevaEmpresa = ref({
   empresaId: ''
 });
 
-// --- LÓGICA MARKETPLACE ---
-const agregarCampo = (tipo) => {
-  const etiqueta = prompt(`Nombre de la etiqueta para ${tipo}:`);
-  if (etiqueta) {
-    nuevoForm.value.campos.push({
-      idLocal: Date.now().toString(), // Cambiamos _id por idLocal
-      etiqueta,
-      tipo
-    });
-  }
+// --- ESTADO PARA CONSTRUCTOR MARKETPLACE ---
+const mostrarConstructor = ref(false);
+const datosEdicion = ref(null);
+
+const abrirConstructorMarket = () => {
+  mostrarConstructor.value = true;
+  datosEdicion.value = null;
 };
 
-const eliminarCampo = (index) => nuevoForm.value.campos.splice(index, 1);
-
-const publicarPlantilla = async () => {
-  if (nuevoForm.value.campos.length === 0) return alert("Añade al menos un campo");
-  
-  try {
-    // OPCIONAL: Limpiar los IDs temporales antes de enviar para que la DB esté limpia
-    const datosParaEnviar = {
-      ...nuevoForm.value,
-      campos: nuevoForm.value.campos.map(({ etiqueta, tipo }) => ({ etiqueta, tipo }))
-    };
-
-    await api.post('/backoffice/market/subir', datosParaEnviar);
-    alert("🚀 Plantilla publicada con éxito");
-    nuevoForm.value = { titulo: '', descripcion: '', categoria: 'Ventas', campos: [] };
-  } catch (err) {
-    alert("Error al publicar: " + err.response?.data?.msg || err.message);
-  }
+const finalizarGuardadoMarket = () => {
+  mostrarConstructor.value = false;
+  datosEdicion.value = null;
 };
+
 // --- LÓGICA EMPRESAS ---
 const registrarEmpresa = async () => {
   try {
@@ -82,48 +56,36 @@ const registrarEmpresa = async () => {
             <div class="icon-circle">🛒</div>
             <div>
               <h2>Nueva Plantilla Marketplace</h2>
-              <p class="card-desc">Crea formularios base para la tienda virtual.</p>
+              <p class="card-desc">Crea formularios avanzados para la tienda virtual.</p>
             </div>
           </div>
           
           <div class="form-group">
-            <label class="label-tiny">DATOS DE LA PLANTILLA</label>
-            <input v-model="nuevoForm.titulo" placeholder="Título (ej: Auditoría de Seguridad)" class="input-back" />
-            
-            <select v-model="nuevoForm.categoria" class="input-back">
-              <option disabled value="">Seleccionar Categoría</option>
-              <option v-for="cat in categorias" :key="cat" :value="cat">{{ cat }}</option>
-            </select>
-            
-            <textarea v-model="nuevoForm.descripcion" placeholder="Descripción que verá el gerente al comprar..." class="input-back" rows="3"></textarea>
-          </div>
-          
-          <div class="constructor-box">
-            <p class="label-tiny">HERRAMIENTAS DE DISEÑO</p>
-            <div class="toolbar-master">
-              <button @click="agregarCampo('texto')" class="btn-tool"><span>📝</span> Texto</button>
-              <button @click="agregarCampo('foto')" class="btn-tool"><span>📷</span> Foto</button>
-              <button @click="agregarCampo('gps')" class="btn-tool"><span>📍</span> GPS</button>
-            </div>
-
-            <div class="preview-lista-master">
-              <div v-if="nuevoForm.campos.length === 0" class="empty-fields">
-                No hay campos agregados aún
-              </div>
-              <div v-for="(campo, i) in nuevoForm.campos" :key="i" class="item-campo-master">
-                <div class="campo-info">
-                  <span class="campo-type">{{ campo.tipo }}</span>
-                  <input v-model="campo.etiqueta" placeholder="Nombre de la pregunta..." class="input-inline" />
-                </div>
-                <button @click="eliminarCampo(i)" class="btn-del-master">×</button>
-              </div>
-            </div>
+            <p class="info-text">Usa el constructor completo con todos los tipos de campos:</p>
+            <ul class="feature-list">
+              <li>✅ Todos los tipos de campo (texto, números, email)</li>
+              <li>✅ Opciones múltiples, escala lineal, cuadrículas</li>
+              <li>✅ Multimedia (foto, video, GPS, adjuntos)</li>
+              <li>✅ Configuración de categoría, precio y visibilidad</li>
+            </ul>
           </div>
 
-          <button @click="publicarPlantilla" class="btn-alta">
-            <span>🌍</span> PUBLICAR EN TIENDA VIRTUAL
+          <button @click="abrirConstructorMarket" class="btn-alta">
+            <span>�️</span> ABRIR CONSTRUCTOR COMPLETO
           </button>
         </section>
+
+        <!-- Constructor Modal para Marketplace -->
+        <div v-if="mostrarConstructor" class="constructor-modal-overlay">
+          <div class="constructor-modal">
+            <button @click="mostrarConstructor = false" class="btn-close-modal">✕ Cerrar</button>
+            <Constructor 
+              :datosEdicion="datosEdicion"
+              modo="marketplace"
+              @finalizado="finalizarGuardadoMarket"
+            />
+          </div>
+        </div>
 
         <section class="card-gestion">
           <div class="card-header">

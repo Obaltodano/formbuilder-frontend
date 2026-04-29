@@ -1,0 +1,451 @@
+/**
+ * RESPONSIVE.CSS - Estilos responsive globales para FormBuilder
+ * 
+ * Este archivo contiene utilidades y mejoras responsive que aplican
+ * a toda la aplicación.
+ */
+
+/* ============================================
+   ⭐ UTILIDADES RESPONSIVE
+   ============================================ */
+
+/* Contenedor que se adapta a cualquier pantalla */
+.responsive-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+    .responsive-container {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .responsive-container {
+        padding: 0 2rem;
+        max-width: 1400px;
+    }
+}
+
+/* ============================================
+   ⭐ TEXTO RESPONSIVE
+   ============================================ */
+
+.text-responsive-xs {
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
+}
+
+.text-responsive-sm {
+    font-size: clamp(0.75rem, 2.5vw, 0.875rem);
+}
+
+.text-responsive-base {
+    font-size: clamp(0.875rem, 3vw, 1rem);
+}
+
+.text-responsive-lg {
+    font-size: clamp(1rem, 4vw, 1.25rem);
+}
+
+.text-responsive-xl {
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+}
+
+.text-responsive-2xl {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+}
+
+/* ============================================
+   ⭐ GRID RESPONSIVE
+   ============================================ */
+
+.grid-responsive-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .grid-responsive-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.grid-responsive-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .grid-responsive-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-responsive-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.grid-responsive-4 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 480px) {
+    .grid-responsive-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .grid-responsive-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-responsive-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ============================================
+   ⭐ FLEX RESPONSIVE
+   ============================================ */
+
+.flex-responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .flex-responsive {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+.flex-responsive-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .flex-responsive-center {
+        flex-direction: row;
+    }
+}
+
+/* ============================================
+   ⭐ UTILIDADES DE ESPACIADO
+   ============================================ */
+
+/* Padding responsive */
+.p-responsive {
+    padding: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+.px-responsive {
+    padding-left: clamp(0.75rem, 3vw, 2rem);
+    padding-right: clamp(0.75rem, 3vw, 2rem);
+}
+
+.py-responsive {
+    padding-top: clamp(0.75rem, 3vw, 2rem);
+    padding-bottom: clamp(0.75rem, 3vw, 2rem);
+}
+
+/* Gap responsive */
+.gap-responsive {
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+/* ============================================
+   ⭐ BOTONES Y ÁREAS DE TOQUE
+   ============================================ */
+
+/* Botón con área de toque mínima para móvil */
+.btn-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 24px;
+}
+
+@media (max-width: 480px) {
+    .btn-touch-target {
+        width: 100%;
+    }
+}
+
+/* Grupo de botones responsive */
+.btn-group-responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+    .btn-group-responsive {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+/* ============================================
+   ⭐ TABLAS RESPONSIVE
+   ============================================ */
+
+.table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+}
+
+/* Tabla tipo tarjetas en móvil */
+@media (max-width: 640px) {
+    .table-card-mode thead {
+        display: none;
+    }
+    
+    .table-card-mode tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    .table-card-mode tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border: none;
+    }
+    
+    .table-card-mode tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+}
+
+/* ============================================
+   ⭐ IMÁGENES Y MEDIA
+   ============================================ */
+
+.img-responsive {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.video-responsive {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+}
+
+/* Contenedor de media con ratio fijo */
+.media-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+}
+
+.media-container > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ============================================
+   ⭐ FORMULARIOS
+   ============================================ */
+
+/* Input responsive que previene zoom en iOS */
+.input-no-zoom {
+    font-size: 16px;
+}
+
+@media (max-width: 480px) {
+    .input-no-zoom {
+        font-size: 16px; /* iOS no hace zoom con 16px+ */
+    }
+}
+
+/* Grupo de formulario responsive */
+.form-group-responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+    .form-group-responsive {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .form-group-responsive > label {
+        width: 120px;
+        flex-shrink: 0;
+    }
+    
+    .form-group-responsive > input,
+    .form-group-responsive > select,
+    .form-group-responsive > textarea {
+        flex: 1;
+    }
+}
+
+/* ============================================
+   ⭐ MODALES Y OVERLAYS
+   ============================================ */
+
+/* Modal responsive */
+.modal-responsive {
+    width: 95%;
+    max-width: 600px;
+    max-height: 90vh;
+    margin: auto;
+}
+
+@media (max-width: 480px) {
+    .modal-responsive {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+}
+
+/* ============================================
+   ⭐ OCULTAR/MOSTRAR ELEMENTOS
+   ============================================ */
+
+/* Ocultar en móvil */
+@media (max-width: 767px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* Ocultar en tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .hide-tablet {
+        display: none !important;
+    }
+}
+
+/* Ocultar en desktop */
+@media (min-width: 1024px) {
+    .hide-desktop {
+        display: none !important;
+    }
+}
+
+/* Mostrar solo en móvil */
+@media (min-width: 768px) {
+    .show-mobile-only {
+        display: none !important;
+    }
+}
+
+/* Mostrar solo en desktop */
+@media (max-width: 1023px) {
+    .show-desktop-only {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   ⭐ SCROLLBAR STYLING
+   ============================================ */
+
+/* Scrollbar más fino en móvil */
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 2px;
+    }
+}
+
+/* ============================================
+   ⭐ ACCESIBILIDAD
+   ============================================ */
+
+/* Respetar preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Mejoras para modo oscuro del sistema (si aplica) */
+@media (prefers-color-scheme: dark) {
+    /* Ajustes específicos si se necesita */
+}
+
+/* Mejoras para alto contraste */
+@media (prefers-contrast: high) {
+    .btn-touch-target,
+    input,
+    select,
+    textarea {
+        border-width: 2px;
+    }
+}
+
+/* ============================================
+   ⭐ SAFE AREA (iPhone X+)
+   ============================================ */
+
+@supports (padding: max(0px)) {
+    .safe-area-top {
+        padding-top: max(1rem, env(safe-area-inset-top));
+    }
+    
+    .safe-area-bottom {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    
+    .safe-area-left {
+        padding-left: max(1rem, env(safe-area-inset-left));
+    }
+    
+    .safe-area-right {
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}

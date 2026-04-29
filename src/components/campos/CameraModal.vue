@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useCamera } from '../../composables/useCamera.js';
+import LoadingSpinner from '../shared/LoadingSpinner.vue';
 
 const props = defineProps({
   tipo: { type: String, default: 'foto' }
@@ -7,60 +9,66 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'capture']);
 
-const videoRef = ref(null);
 const canvasRef = ref(null);
 const isRecording = ref(false);
 const recordTime = ref(0);
-let streamInstance = null;
 let mediaRecorder = null;
 let chunks = [];
 let timerInterval = null;
 
+// Usar el composable de cámara
+const { 
+  stream, 
+  isLoading, 
+  error, 
+  videoRef, 
+  startCamera, 
+  stopCamera, 
+  takePhoto, 
+  startRecording 
+} = useCamera();
+
 onMounted(async () => {
   try {
-    streamInstance = await navigator.mediaDevices.getUserMedia({
+    const cameraOptions = {
       video: { 
         width: { ideal: 1280 },
         height: { ideal: 720 },
         facingMode: "environment" 
       },
       audio: props.tipo === 'video'
-    });
-    if (videoRef.value) videoRef.value.srcObject = streamInstance;
+    };
+    
+    await startCamera(cameraOptions);
   } catch (err) {
-    alert("Error: Asegúrate de dar permisos a la cámara.");
+    console.error("Error inicializando cámara:", err);
     emit('close');
   }
 });
 
 const formatTime = (s) => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
 
-const tomarFoto = () => {
-  const canvas = canvasRef.value;
-  const video = videoRef.value;
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  canvas.toBlob((blob) => {
-    const file = new File([blob], `foto_${Date.now()}.jpg`, { type: 'image/jpeg' });
+const handleTakePhoto = async () => {
+  try {
+    const file = await takePhoto(canvasRef, 0.9);
     emit('capture', file);
-  }, 'image/jpeg', 0.9);
+  } catch (err) {
+    console.error("Error tomando foto:", err);
+    alert("Error al capturar la foto");
+  }
 };
 
-const toggleGrabacion = () => {
+const toggleGrabacion = async () => {
   if (!isRecording.value) {
-    chunks = [];
-    mediaRecorder = new MediaRecorder(streamInstance);
-    recordTime.value = 0;
-    timerInterval = setInterval(() => recordTime.value++, 1000);
-    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'video/mp4' });
-      const file = new File([blob], `video_${Date.now()}.mp4`, { type: 'video/mp4' });
-      emit('capture', file);
-    };
-    mediaRecorder.start();
-    isRecording.value = true;
+    try {
+      mediaRecorder = await startRecording();
+      recordTime.value = 0;
+      timerInterval = setInterval(() => recordTime.value++, 1000);
+      isRecording.value = true;
+    } catch (err) {
+      console.error("Error iniciando grabación:", err);
+      alert("Error al iniciar la grabación");
+    }
   } else {
     mediaRecorder.stop();
     clearInterval(timerInterval);
@@ -69,7 +77,6 @@ const toggleGrabacion = () => {
 };
 
 onUnmounted(() => {
-  if (streamInstance) streamInstance.getTracks().forEach(t => t.stop());
   clearInterval(timerInterval);
 });
 </script>
@@ -83,14 +90,21 @@ onUnmounted(() => {
       </div>
 
       <div class="video-container">
-        <video ref="videoRef" autoplay playsinline class="camera-video-element"></video>
-        <canvas ref="canvasRef" style="display:none"></canvas>
+        <LoadingSpinner v-if="isLoading" size="large" color="white" text="Iniciando cámara..." />
+        <div v-else-if="error" class="camera-error">
+          <span>{{ error }}</span>
+          <button @click="$emit('close')" class="error-close-btn">Cerrar</button>
+        </div>
+        <template v-else>
+          <video ref="videoRef" autoplay playsinline class="camera-video-element"></video>
+          <canvas ref="canvasRef" style="display:none"></canvas>
+        </template>
       </div>
 
       <div class="camera-footer">
         <button @click="$emit('close')" class="btn-exit" v-if="!isRecording">✕</button>
         
-        <button @click="tipo === 'foto' ? tomarFoto() : toggleGrabacion()" 
+        <button @click="tipo === 'foto' ? handleTakePhoto() : toggleGrabacion()" 
                 class="shutter-main" :class="{ 'recording': isRecording }">
           <div :class="isRecording ? 'icon-stop' : 'icon-start'"></div>
         </button>
@@ -144,5 +158,22 @@ onUnmounted(() => {
 .icon-stop { width: 30px; height: 30px; background: #ff4444; border-radius: 4px; }
 
 @keyframes blink { 50% { opacity: 0; } }
+
+.camera-error {
+  color: white;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-close-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .btn-exit { position: absolute; left: 30px; background: none; border: none; color: white; font-size: 28px; }
 </style>

@@ -1,16 +1,81 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import api from '../api/axios';
 import CampoRender from '../components/campos/CampoRender.vue';
+import { useFormValidation } from '../composables/useFormValidation.js';
+import LoadingSpinner from '../components/shared/LoadingSpinner.vue';
+import { useRespuestas } from '@/composables/useRespuestas';
+import { useApi } from '@/composables/useApi';
 
 const route = useRoute();
 const router = useRouter();
+const { submitRespuesta } = useRespuestas();
+const { request } = useApi();
+
 const formulario = ref(null);
-const respuestas = ref({});
 const user = ref(null); 
 const archivos = ref({}); 
-const previews = ref({}); 
+const previews = ref({});
+
+// Validación del formulario
+const validationSchema = computed(() => {
+  if (!formulario.value) return {};
+  
+  const schema = {};
+  formulario.value.campos.forEach(campo => {
+    const rules = [];
+    
+    if (campo.requerido) {
+      rules.push('required');
+    }
+    
+    if (campo.tipo === 'email') {
+      rules.push('email');
+    }
+    
+    if (campo.tipo === 'numero') {
+      rules.push('number');
+      if (campo.validacion?.min) {
+        rules.push({ type: 'min', value: campo.validacion.min, message: `Mínimo ${campo.validacion.min}` });
+      }
+      if (campo.validacion?.max) {
+        rules.push({ type: 'max', value: campo.validacion.max, message: `Máximo ${campo.validacion.max}` });
+      }
+    }
+    
+    if (campo.tipo === 'texto_corto' && campo.validacion?.maxLength) {
+      rules.push({ type: 'maxLength', value: campo.validacion.maxLength, message: `Máximo ${campo.validacion.maxLength} caracteres` });
+    }
+    
+    schema[campo._id] = {
+      label: campo.label,
+      rules
+    };
+  });
+  
+  return schema;
+});
+
+const { 
+  formData, 
+  errors, 
+  touched, 
+  isValid, 
+  hasErrors, 
+  firstError,
+  validateField, 
+  validateForm, 
+  touchField, 
+  resetValidation 
+} = useFormValidation(validationSchema);
+
+// Sincronizar formData con respuestas existentes
+const respuestas = computed({
+  get: () => formData.value,
+  set: (value) => {
+    formData.value = value;
+  }
+}); 
 
 // --- LÓGICA DE MULTIMEDIA ---
 const showMediaModal = ref(false);
@@ -28,8 +93,7 @@ onMounted(async () => {
   if (savedUser) user.value = JSON.parse(savedUser);
 
   try {
-    const res = await api.get(`/formularios/${route.params.id}`);
-    formulario.value = res.data;
+    formulario.value = await request('GET', `/formularios/${route.params.id}`);
     
     // Inicialización de respuestas con validación de tipo
     formulario.value.campos.forEach(campo => {
@@ -117,37 +181,41 @@ const cerrarMedia = () => {
 const enviarReporte = async () => {
   if (!user.value?.empresaId) return alert("Sesión inválida.");
 
+  // Validar formulario antes de enviar
+  if (!validateForm()) {
+    alert("Por favor complete los campos requeridos antes de enviar.");
+    return;
+  }
+
   try {
-    const formData = new FormData();
-    const datosFinales = {}; // Aquí guardaremos con los nombres legibles
+    const datosFinales = {};
 
     // Recorremos los campos del formulario para construir el objeto final
     formulario.value.campos.forEach(campo => {
       // Obtenemos el valor usando el _id que usa el v-model
       const valor = respuestas.value[campo._id];
       
-      // IMPORTANTE: Usamos campo.label como llave para evitar el 'undefined'
-      // Si el valor es null o undefined, enviamos un string vacío
+      // Usamos campo.label como llave para evitar el 'undefined'
       datosFinales[campo.label] = (valor !== undefined && valor !== null) ? valor : "";
 
       // Si hay un archivo (foto/video) asociado a este campo por su ID
       if (archivos.value[campo._id]) {
-        // Adjuntamos el archivo usando el label como nombre del campo para Multer
-        formData.append(campo.label, archivos.value[campo._id]);
+        datosFinales[campo.label] = archivos.value[campo._id];
       }
     });
 
-    formData.append('empresaId', user.value.empresaId);
-    formData.append('usuarioId', user.value.id || user.value._id);
-    formData.append('formularioId', formulario.value._id);
-    formData.append('nombreFormulario', formulario.value.titulo);
-    
-    // Enviamos el JSON de respuestas ya mapeado con los nombres de los campos
-    formData.append('datos', JSON.stringify(datosFinales));
-
-    await api.post('/respuestas', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+    // ⭐ REGLA CRÍTICA: Convertir archivos a formato con labels como keys
+    // archivosPorLabel debe ser: { "Label Campo": [File1, File2] }
+    const archivosPorLabel = {};
+    Object.keys(archivos.value).forEach(id => {
+      const campo = formulario.value.campos.find(c => c._id === id);
+      if (campo) {
+        archivosPorLabel[campo.label] = [archivos.value[id]];
+      }
     });
+
+    // Usar el nuevo composable para enviar respuesta
+    await submitRespuesta(formulario.value, datosFinales, archivosPorLabel);
 
     alert("🚀 Reporte enviado con éxito");
     router.push('/dashboard');
@@ -181,8 +249,16 @@ const enviarReporte = async () => {
             :campo="campo"
             :id="campo._id"
             v-model="respuestas[campo._id]"
+            @update:modelValue="touchField(campo._id)"
             @solicitarCamara="abrirMedia"
           />
+          
+          <!-- Validación errors -->
+          <div v-if="errors[campo._id]" class="field-errors">
+            <span v-for="error in errors[campo._id]" :key="error" class="error-message">
+              {{ error }}
+            </span>
+          </div>
           
           <div v-if="previews[campo._id]" class="media-preview-container">
             <img v-if="campo.tipo === 'foto'" :src="previews[campo._id]" class="mini-preview" />
@@ -222,4 +298,23 @@ const enviarReporte = async () => {
 
 <style scoped>
 @import '../styles/llenar.css';
+
+.field-errors {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+}
+
+.error-message {
+  display: block;
+  color: #dc2626;
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+.error-message:not(:last-child) {
+  margin-bottom: 0.25rem;
+}
 </style>
