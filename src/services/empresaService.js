@@ -4,6 +4,8 @@ export const empresaService = {
   // CRUD
   list: () => api.get('/admin/empresas'),
   
+  getAll: () => api.get('/admin/empresas'), // Alias para list
+  
   getById: (id) => api.get(`/empresas/${id}`),
   
   getBySlug: (slug) => api.get(`/public/empresa/${slug}`),
@@ -28,12 +30,20 @@ export const empresaService = {
   // Límites y métricas
   getLimits: (id) => api.get(`/empresas/${id}/limits`),
   
-  getMetrics: (id) => api.get(`/empresas/${id}/metrics`),
+  getMetrics: (id) => {
+    // Si id es 'global' o no se proporciona, usa el endpoint de admin
+    if (!id || id === 'global') {
+      return api.get('/admin/metrics')
+    }
+    return api.get(`/empresas/${id}/metrics`)
+  },
   
   // Status
-  suspend: (id, reason) => api.post(`/admin/empresas/${id}/suspend`, { reason }),
+  suspend: (id, reason) => api.patch(`/admin/empresas/${id}/suspender`, { reason }),
   
-  activate: (id) => api.post(`/admin/empresas/${id}/activate`),
+  activate: (id) => api.patch(`/admin/empresas/${id}/activar`),
+  
+  updateStatus: (id, status) => api.put(`/admin/empresas/${id}/status`, { status }),
   
   // Plan
   changePlan: (id, planId) => api.put(`/empresas/${id}/plan`, { planId }),

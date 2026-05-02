@@ -20,10 +20,12 @@ export type CampoTipo =
 
 /**
  * Configuración de un campo de formulario
- * ⭐ IMPORTANTE: Usar label como KEY en datos
+ * ⭐ IMPORTANTE: Usar _id o id como KEY en datos (según documentación backend)
  */
 export interface CampoConfig {
-  label: string;           // ⭐ IMPORTANTE: Usar como KEY en datos
+  _id?: string;            // MongoDB ObjectId (para campos guardados)
+  id?: string;             // ID temporal (para campos nuevos en constructor)
+  label: string;           // Label del campo (para mostrar al usuario)
   tipo: CampoTipo;
   requerido: boolean;
   placeholder?: string;

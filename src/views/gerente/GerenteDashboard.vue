@@ -103,7 +103,7 @@ onMounted(init)
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-900 text-slate-100">
+  <div class="min-h-screen bg-slate-900 text-slate-100 pb-24 md:pb-0">
     <!-- Header -->
     <header class="bg-slate-800 border-b border-slate-700">
       <div class="px-4 sm:px-6 lg:px-8 py-4">

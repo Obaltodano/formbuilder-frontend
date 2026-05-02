@@ -38,11 +38,44 @@ export const useEmpresaStore = defineStore('empresa', () => {
     '--color-secondary': branding.value.colorSecundario
   }))
 
+  // Propiedades computadas para branding (acceso rápido desde Navbar)
+  const nombre = computed(() => branding.value.nombreEmpresa || 'Mi Empresa')
+  const logoUrl = computed(() => branding.value.logoUrl)
+  const primaryColor = computed(() => branding.value.colorPrimario || '#3b82f6')
+  const primaryHover = computed(() => {
+    // Darken the primary color by 10% for hover state
+    const color = branding.value.colorPrimario || '#3b82f6'
+    return color // Simplified - in production use a color manipulation library
+  })
+
   // Actions
   const fetchEmpresa = async (slug) => {
     loading.value = true
     try {
       const response = await empresaService.getBySlug(slug)
+      empresa.value = response.data
+      branding.value = {
+        logoUrl: response.data.logoUrl,
+        colorPrimario: response.data.colorPrimario || '#3b82f6',
+        colorSecundario: response.data.colorSecundario || '#1e293b',
+        nombreEmpresa: response.data.nombre
+      }
+      limits.value = response.data.limits || limits.value
+      status.value = response.data.status
+      return response.data
+    } catch (err) {
+      error.value = err.message
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Buscar empresa por ID (para usuarios logueados)
+  const fetchEmpresaById = async (id) => {
+    loading.value = true
+    try {
+      const response = await empresaService.getById(id)
       empresa.value = response.data
       branding.value = {
         logoUrl: response.data.logoUrl,
@@ -86,6 +119,27 @@ export const useEmpresaStore = defineStore('empresa', () => {
     limits.value = { ...limits.value, ...response.data }
   }
 
+  const $reset = () => {
+    empresa.value = null
+    branding.value = {
+      logoUrl: null,
+      colorPrimario: '#3b82f6',
+      colorSecundario: '#1e293b',
+      nombreEmpresa: 'FormBuilder'
+    }
+    limits.value = {
+      usuariosUsados: 0,
+      usuariosLimite: 5,
+      formulariosUsados: 0,
+      formulariosLimite: 10,
+      storageUsado: 0,
+      storageLimite: 1024,
+      formulariosActivosUsados: 0,
+      formulariosActivosLimite: 5
+    }
+    status.value = 'activa'
+  }
+
   return {
     empresa,
     branding,
@@ -99,9 +153,17 @@ export const useEmpresaStore = defineStore('empresa', () => {
     canCreateForm,
     storagePercentage,
     cssVariables,
+    // Branding shortcuts
+    nombre,
+    logoUrl,
+    primaryColor,
+    primaryHover,
+    // Actions
     fetchEmpresa,
+    fetchEmpresaById,
     updateBranding,
     checkLimits,
-    refreshLimits
+    refreshLimits,
+    $reset
   }
 })

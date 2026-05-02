@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useUsuarioStore } from '@/stores/useUsuarioStore'
 import { useEmpresaStore } from '@/stores/useEmpresaStore'
 import { useFormularioStore } from '@/stores/useFormularioStore'
@@ -9,13 +10,21 @@ import {
   ChevronRight, Menu, Bell, LogOut, FileText, Home
 } from 'lucide-vue-next'
 
+const route = useRoute()
 const usuarioStore = useUsuarioStore()
 const empresaStore = useEmpresaStore()
 const formularioStore = useFormularioStore()
 const uiStore = useUiStore()
 
+// Detectar tab según la ruta
+const getInitialTab = () => {
+  if (route.path === '/app/historial') return 'historial'
+  if (route.path === '/app/tareas') return 'tareas'
+  return 'tareas'
+}
+
 // Estado
-const activeTab = ref('tareas') // tareas, completados, perfil
+const activeTab = ref(getInitialTab()) // tareas, historial, perfil
 const tareas = ref([])
 const loading = ref(false)
 const refreshing = ref(false)
@@ -97,7 +106,7 @@ onMounted(fetchTareas)
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-900 text-slate-100">
+  <div class="min-h-screen bg-slate-900 text-slate-100 pb-20 md:pb-0">
     <!-- Header -->
     <header 
       class="sticky top-0 z-20 px-4 py-3 border-b border-slate-800"

@@ -1,38 +1,44 @@
 <script setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useUsuarioStore } from '@/stores/useUsuarioStore';
+import { useEmpresaStore } from '@/stores/useEmpresaStore';
 import Navbar from './components/Navbar.vue';
 import './styles/theme.css'; // El genérico para todo el sitio
 
 // En App.vue
-import { onMounted } from 'vue';
-
-//
 const route = useRoute();
-const mostrarNavbar = computed(() => route.path !== '/login');
+const router = useRouter();
+const usuarioStore = useUsuarioStore();
+const empresaStore = useEmpresaStore();
 
+const mostrarNavbar = computed(() => {
+  const hiddenPaths = ['/', '/login']
+  return !hiddenPaths.includes(route.path)
+})
 
-onMounted(() => {
-  // 1. Detectar si la página se está recargando (F5)
-  if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_RELOAD) {
-    console.log("Recarga detectada. Limpiando sesión por seguridad...");
+onMounted(async () => {
+  // Restaurar sesión si existe token
+  const hasSession = usuarioStore.restoreSession();
+  
+  if (hasSession) {
+    console.log('✅ Sesión restaurada:', usuarioStore.user?.rol);
     
-    // Limpiamos los datos para evitar el error 401
-    sessionStorage.clear();
-    localStorage.clear();
-    
-    // Redirigimos al login para empezar de cero
-    window.location.href = '/';
-  }
-
-  // 2. Bloqueo opcional del botón "Atrás" (Popstate)
-  window.history.pushState(null, null, window.location.pathname);
-  window.addEventListener('popstate', () => {
-    if (sessionStorage.getItem('token')) {
-      sessionStorage.clear();
-      window.location.href = '/';
+    // Cargar datos de empresa si es gerente o empleado
+    if (usuarioStore.user?.empresaId && !usuarioStore.isSuperAdmin) {
+      try {
+        await empresaStore.fetchEmpresaById(usuarioStore.user.empresaId);
+      } catch (err) {
+        console.error('Error cargando empresa:', err);
+      }
     }
-  });
+  } else {
+    console.log('⚠️ No hay sesión activa');
+    // Solo redirigir si está en una ruta protegida
+    if (route.meta.requiresAuth) {
+      router.push('/');
+    }
+  }
 });
 </script>
 

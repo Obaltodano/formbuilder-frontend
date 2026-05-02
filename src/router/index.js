@@ -40,6 +40,11 @@ const routes = [
     meta: { requiresAuth: true, role: 'gerente' } 
   },
   { 
+    path: '/formularios', 
+    component: () => import('../views/Admin.vue'),
+    meta: { requiresAuth: true, role: 'gerente' } 
+  },
+  { 
     path: '/marketplace', 
     component: () => import('../views/Marketplace.vue'),
     meta: { requiresAuth: true, role: 'gerente' } 
@@ -67,6 +72,21 @@ const routes = [
     component: () => import('../views/BackofficeReportes.vue'),
     meta: { requiresAuth: true, role: 'superadmin' } 
   },
+  {
+    path: '/superadmin-empresas',
+    component: () => import('../views/admin/SuperAdminEmpresas.vue'),
+    meta: { requiresAuth: true, role: 'superadmin' }
+  },
+  {
+    path: '/superadmin-pagos',
+    component: () => import('../views/admin/SuperAdminPagos.vue'),
+    meta: { requiresAuth: true, role: 'superadmin' }
+  },
+  {
+    path: '/superadmin-planes',
+    component: () => import('../views/admin/SuperAdminPlanes.vue'),
+    meta: { requiresAuth: true, role: 'superadmin' }
+  },
 
   // --- NUEVAS RUTAS SaaS ---
   {
@@ -75,7 +95,27 @@ const routes = [
     meta: { requiresAuth: true, role: 'gerente' }
   },
   {
+    path: '/gerente-branding',
+    component: () => import('../views/gerente/GerenteBranding.vue'),
+    meta: { requiresAuth: true, role: 'gerente' }
+  },
+  {
+    path: '/gerente-pagos',
+    component: () => import('../views/gerente/GerentePagos.vue'),
+    meta: { requiresAuth: true, role: 'gerente' }
+  },
+  {
     path: '/app',
+    component: UsuarioApp,
+    meta: { requiresAuth: true, role: 'usuario' }
+  },
+  {
+    path: '/app/tareas',
+    component: UsuarioApp,
+    meta: { requiresAuth: true, role: 'usuario' }
+  },
+  {
+    path: '/app/historial',
     component: UsuarioApp,
     meta: { requiresAuth: true, role: 'usuario' }
   },
@@ -83,6 +123,11 @@ const routes = [
     path: '/constructor',
     component: UnifiedFormBuilder,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/test-navbar',
+    component: () => import('../views/TestNavbar.vue'),
+    meta: { requiresAuth: false }
   }
 ];
 

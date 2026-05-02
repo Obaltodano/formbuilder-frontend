@@ -3,9 +3,19 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import CampoRender from '../components/campos/CampoRender.vue';
 import { useFormValidation } from '../composables/useFormValidation.js';
-import LoadingSpinner from '../components/shared/LoadingSpinner.vue';
 import { useRespuestas } from '@/composables/useRespuestas';
 import { useApi } from '@/composables/useApi';
+import {
+  FileText,
+  Send,
+  X,
+  Camera,
+  Video,
+  AlertCircle,
+  Loader2,
+  CheckCircle,
+  ChevronLeft
+} from 'lucide-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -227,22 +237,45 @@ const enviarReporte = async () => {
 </script>
 
 <template>
-  <div class="llenar-container">
-    <div v-if="formulario" class="llenar-page">
-      <header class="form-header">
-        <h1 class="form-title">{{ formulario.titulo }}</h1>
-        <p class="form-subtitle">Complete la información solicitada abajo</p>
-      </header>
+  <div class="min-h-screen bg-slate-950 pb-24">
+    <!-- Loading State -->
+    <div v-if="!formulario" class="flex flex-col items-center justify-center min-h-screen">
+      <Loader2 class="w-12 h-12 text-blue-500 animate-spin mb-4" />
+      <p class="text-slate-400">Cargando formulario...</p>
+    </div>
 
-      <div class="form-body form-grid">
+    <div v-else class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <button 
+          @click="$router.back()"
+          class="flex items-center gap-2 text-slate-400 hover:text-slate-200 mb-4"
+        >
+          <ChevronLeft class="w-5 h-5" />
+          Volver
+        </button>
+        
+        <div class="bg-slate-800 rounded-xl border border-slate-700 p-6">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <FileText class="w-5 h-5 text-blue-400" />
+            </div>
+            <h1 class="text-xl font-bold text-slate-100">{{ formulario.titulo }}</h1>
+          </div>
+          <p class="text-slate-400 text-sm">Complete la información solicitada</p>
+        </div>
+      </div>
+
+      <!-- Form Fields -->
+      <div class="space-y-4">
         <div v-for="campo in formulario.campos" 
              :key="campo._id" 
-             class="field-card-fill"
-             :class="{'full-width': campo.tipo.includes('cuadricula') || campo.tipo === 'texto_largo'}">
-          
-          <label class="field-label">
+             class="bg-slate-800 rounded-xl border border-slate-700 p-5"
+             :class="{ 'border-red-500/50': errors[campo._id] && touched[campo._id] }"
+        >
+          <label class="block text-sm font-medium text-slate-200 mb-3">
             {{ campo.label }}
-            <span v-if="campo.requerido" class="req-star">*</span>
+            <span v-if="campo.requerido" class="text-red-400">*</span>
           </label>
 
           <CampoRender 
@@ -253,68 +286,82 @@ const enviarReporte = async () => {
             @solicitarCamara="abrirMedia"
           />
           
-          <!-- Validación errors -->
-          <div v-if="errors[campo._id]" class="field-errors">
-            <span v-for="error in errors[campo._id]" :key="error" class="error-message">
-              {{ error }}
-            </span>
+          <!-- Validation Errors -->
+          <div v-if="errors[campo._id] && touched[campo._id]" class="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <div class="flex items-center gap-2">
+              <AlertCircle class="w-4 h-4 text-red-400 flex-shrink-0" />
+              <span v-for="error in errors[campo._id]" :key="error" class="text-sm text-red-400">
+                {{ error }}
+              </span>
+            </div>
           </div>
           
-          <div v-if="previews[campo._id]" class="media-preview-container">
-            <img v-if="campo.tipo === 'foto'" :src="previews[campo._id]" class="mini-preview" />
-            <div v-if="campo.tipo === 'video'" class="video-preview-wrapper">
-              <video :src="previews[campo._id]" controls class="mini-preview" />
+          <!-- Media Previews -->
+          <div v-if="previews[campo._id]" class="mt-4">
+            <img v-if="campo.tipo === 'foto'" :src="previews[campo._id]" class="max-w-xs rounded-lg border border-slate-700" />
+            <div v-if="campo.tipo === 'video'" class="max-w-xs">
+              <video :src="previews[campo._id]" controls class="w-full rounded-lg border border-slate-700" />
             </div>
           </div>
         </div>
       </div>
 
-      <button @click="enviarReporte" class="btn-submit-form">
-        ENVIAR REPORTE FINAL
-      </button>
+      <!-- Submit Button -->
+      <div class="mt-8 flex justify-end">
+        <button 
+          @click="enviarReporte"
+          class="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+        >
+          <Send class="w-5 h-5" />
+          Enviar Reporte
+        </button>
+      </div>
     </div>
   </div>
 
+  <!-- Camera Modal -->
   <Teleport to="body">
-    <div v-if="showMediaModal" class="camera-modal">
-      <div class="camera-content">
-        <video ref="videoRef" autoplay playsinline class="video-stream"></video>
-        <canvas ref="canvasRef" style="display:none;"></canvas>
-        <div class="camera-actions">
-          <button @click="cerrarMedia" class="btn-cancel-cam">✕</button>
-          <button v-if="mediaType === 'foto'" @click="tomarFoto" class="btn-shutter">
-            <div class="inner-shutter"></div>
+    <div v-if="showMediaModal" class="fixed inset-0 bg-black z-50 flex items-center justify-center">
+      <div class="relative w-full h-full max-w-lg mx-auto">
+        <video ref="videoRef" autoplay playsinline class="w-full h-full object-cover"></video>
+        <canvas ref="canvasRef" class="hidden"></canvas>
+        
+        <!-- Controls -->
+        <div class="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-8">
+          <button 
+            @click="cerrarMedia" 
+            class="w-12 h-12 rounded-full bg-slate-800/80 flex items-center justify-center text-white hover:bg-slate-700"
+          >
+            <X class="w-6 h-6" />
           </button>
-          <button v-if="mediaType === 'video'" 
-                  @click="isRecording ? detenerGrabacion() : iniciarGrabacion()" 
-                  class="btn-shutter" :class="{ 'is-recording': isRecording }">
-            <div class="inner-shutter" :class="isRecording ? 'rect' : 'circle'"></div>
+          
+          <button 
+            v-if="mediaType === 'foto'" 
+            @click="tomarFoto" 
+            class="w-16 h-16 rounded-full bg-white flex items-center justify-center"
+          >
+            <div class="w-14 h-14 rounded-full border-4 border-slate-900"></div>
           </button>
+          
+          <button 
+            v-if="mediaType === 'video'" 
+            @click="isRecording ? detenerGrabacion() : iniciarGrabacion()" 
+            class="w-16 h-16 rounded-full flex items-center justify-center transition-colors"
+            :class="isRecording ? 'bg-red-500' : 'bg-white'"
+          >
+            <div 
+              class="transition-all"
+              :class="isRecording ? 'w-6 h-6 bg-white rounded' : 'w-14 h-14 rounded-full border-4 border-slate-900'"
+            ></div>
+          </button>
+        </div>
+        
+        <!-- Recording Indicator -->
+        <div v-if="isRecording" class="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1 bg-red-500 rounded-full">
+          <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+          <span class="text-white text-sm font-medium">REC</span>
         </div>
       </div>
     </div>
   </Teleport>
 </template>
-
-<style scoped>
-@import '../styles/llenar.css';
-
-.field-errors {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-}
-
-.error-message {
-  display: block;
-  color: #dc2626;
-  font-size: 0.875rem;
-  line-height: 1.25;
-}
-
-.error-message:not(:last-child) {
-  margin-bottom: 0.25rem;
-}
-</style>

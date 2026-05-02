@@ -55,9 +55,9 @@ export function useRespuestas() {
   /**
    * ⭐ Enviar respuesta de formulario
    * 
-   * REGLAS IMPORTANTES:
-   * 1. Usar label como key en datos JSON
-   * 2. Usar label como fieldname en FormData para archivos
+   * REGLAS IMPORTANTES SEGÚN DOCUMENTACIÓN BACKEND:
+   * 1. Usar campo._id como key en datos JSON
+   * 2. Usar campo._id como fieldname en FormData para archivos
    * 3. Enviar como multipart/form-data
    */
   const submitRespuesta = async (
@@ -69,23 +69,36 @@ export function useRespuestas() {
     const formData = new FormData();
 
     // 1. Agregar metadatos
-    const userStr = localStorage.getItem('user_data');
+    const userStr = localStorage.getItem('user_data') || sessionStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : {};
     
-    formData.append('empresaId', user.empresaId || '');
+    formData.append('empresaId', user.empresaId || user.empresaId || '');
     formData.append('formularioId', formulario._id!);
     formData.append('nombreFormulario', formulario.titulo);
-    formData.append('usuarioId', user.id || '');
+    formData.append('usuarioId', user._id || user.id || '');
 
-    // 2. ⭐ DATOS JSON: Labels como keys
-    formData.append('datos', JSON.stringify(respuestaDatos));
+    // 2. ⭐ DATOS JSON: campo._id como keys (NO label)
+    // Mapear de label -> valor a campoId -> valor
+    const datosPorCampoId: Record<string, any> = {};
+    formulario.campos.forEach(campo => {
+      const valor = respuestaDatos[campo.label];
+      if (valor !== undefined && valor !== null) {
+        datosPorCampoId[campo._id || campo.id] = valor;
+      }
+    });
+    formData.append('datos', JSON.stringify(datosPorCampoId));
 
-    // 3. ⭐ ARCHIVOS: Usar LABEL como fieldname
+    // 3. ⭐ ARCHIVOS: Buscar campo._id por label y usarlo como fieldname
     Object.entries(archivosPorCampo).forEach(([label, files]) => {
-      files.forEach((file) => {
-        // ⭐ CRÍTICO: fieldname = label del campo
-        formData.append(label, file);
-      });
+      // Buscar el campo por label para obtener su _id
+      const campo = formulario.campos.find(c => c.label === label);
+      if (campo) {
+        const campoId = campo._id || campo.id;
+        files.forEach((file) => {
+          // ⭐ CRÍTICO: fieldname = campo._id (no label)
+          formData.append(campoId, file);
+        });
+      }
     });
 
     // Enviar

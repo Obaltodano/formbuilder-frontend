@@ -7,7 +7,8 @@ import { empresaService } from '@/services/empresaService'
 import { 
   Building2, Users, DollarSign, HardDrive, 
   TrendingUp, AlertCircle, CheckCircle, XCircle,
-  Search, Filter, MoreVertical, Image as ImageIcon
+  Search, Filter, MoreVertical, Image as ImageIcon,
+  Eye, ArrowRight
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -31,29 +32,7 @@ const selectedEmpresa = ref(null)
 const showEmpresaModal = ref(false)
 const showPagoModal = ref(false)
 const selectedPago = ref(null)
-
-// Modales adicionales
-const showCrearEmpresaModal = ref(false)
-const showConfigurarPlanesModal = ref(false)
-const showMarketplaceModal = ref(false)
-
-// Formulario nueva empresa
-const nuevaEmpresa = ref({
-  nombre: '',
-  empresaId: '',
-  email: '',
-  plan: 'basico'
-})
-
-// Planes disponibles
-const planes = ref([
-  { id: 'basico', nombre: 'Básico', precio: 29, usuarios: 5, formularios: 10, storage: 1024 },
-  { id: 'pro', nombre: 'Profesional', precio: 79, usuarios: 25, formularios: 50, storage: 5120 },
-  { id: 'enterprise', nombre: 'Enterprise', precio: 199, usuarios: 100, formularios: 999, storage: 51200 }
-])
-
-// Marketplace - Plantillas
-const plantillasMarketplace = ref([])
+const showComprobanteModal = ref(false)
 
 // Computed
 const empresasFiltradas = computed(() => {
@@ -104,9 +83,19 @@ const fetchData = async () => {
       empresaService.list(),
       empresaService.getMetrics('global')
     ])
-    empresas.value = empresasRes.data
-    metricas.value = metricasRes.data
+    empresas.value = empresasRes.data || []
+    
+    // Asegurar que métricas tenga la estructura correcta
+    const metricsData = metricasRes.data || {}
+    metricas.value = {
+      mrr: metricsData.mrr || metricsData.MRR || 0,
+      totalEmpresas: metricsData.totalEmpresas || metricsData.total_empresas || 0,
+      empresasActivas: metricsData.empresasActivas || metricsData.activas || 0,
+      empresasSuspendidas: metricsData.empresasSuspendidas || metricsData.suspendidas || 0,
+      storageTotal: metricsData.storageTotal || metricsData.storage_total || 0
+    }
   } catch (err) {
+    console.error('Error fetching dashboard data:', err)
     uiStore.addToast('Error al cargar datos', 'error')
   } finally {
     loading.value = false
@@ -135,7 +124,7 @@ const toggleEmpresaStatus = async (empresa) => {
 
 const aprobarPago = async (pago) => {
   try {
-    // Llamada al servicio para aprobar
+    await empresaService.activate(pago.empresaId) // Activar servicios
     uiStore.addToast('Pago aprobado y servicios activados', 'success')
     showPagoModal.value = false
     fetchData()
@@ -146,7 +135,6 @@ const aprobarPago = async (pago) => {
 
 const rechazarPago = async (pago) => {
   try {
-    // Llamada al servicio para rechazar
     uiStore.addToast('Pago rechazado', 'warning')
     showPagoModal.value = false
     fetchData()
@@ -155,36 +143,19 @@ const rechazarPago = async (pago) => {
   }
 }
 
-// Crear nueva empresa
-const crearEmpresa = async () => {
-  try {
-    loading.value = true
-    await empresaService.create(nuevaEmpresa.value)
-    uiStore.addToast('Empresa creada exitosamente', 'success')
-    showCrearEmpresaModal.value = false
-    nuevaEmpresa.value = { nombre: '', empresaId: '', email: '', plan: 'basico' }
-    fetchData()
-  } catch (err) {
-    uiStore.addToast('Error al crear empresa', 'error')
-  } finally {
-    loading.value = false
-  }
+// Ver comprobante
+const verComprobante = () => {
+  showComprobanteModal.value = true
 }
 
-// Guardar configuración de planes
-const guardarPlanes = async () => {
-  try {
-    uiStore.addToast('Configuración de planes guardada', 'success')
-    showConfigurarPlanesModal.value = false
-  } catch (err) {
-    uiStore.addToast('Error al guardar planes', 'error')
-  }
+const cerrarComprobante = () => {
+  showComprobanteModal.value = false
 }
 
-// Navegar a Marketplace de plantillas
-const irAMarketplace = () => {
-  router.push('/marketplace')
-}
+// Navegar a páginas completas
+const irAEmpresas = () => router.push('/superadmin-empresas')
+const irAPagos = () => router.push('/superadmin-pagos')
+const irAPlanes = () => router.push('/superadmin-planes')
 
 // Formatear fecha
 const formatDate = (date) => {
@@ -207,34 +178,7 @@ onMounted(fetchData)
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-900 text-slate-100">
-    <!-- Header -->
-    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-30">
-      <div class="px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 class="text-xl font-bold text-slate-100 flex items-center gap-2">
-              <TrendingUp class="w-5 h-5 text-blue-400" />
-              SuperAdmin Dashboard
-            </h1>
-            <p class="text-sm text-slate-500 mt-0.5">Gestión global del SaaS</p>
-          </div>
-          
-          <div class="flex items-center gap-3">
-            <span class="text-sm text-slate-400">
-              {{ usuarioStore.user?.nombre || 'Admin' }}
-            </span>
-            <button 
-              @click="usuarioStore.logout"
-              class="px-3 py-1.5 text-sm rounded-lg border border-slate-600 text-slate-400 hover:text-slate-200 hover:border-slate-500"
-            >
-              Salir
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-
+  <div class="min-h-screen bg-slate-900 text-slate-100 pb-24 md:pb-8">
     <main class="px-4 sm:px-6 lg:px-8 py-6">
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -260,10 +204,18 @@ onMounted(fetchData)
         <div class="xl:col-span-2 space-y-4">
           <div class="bg-slate-800 rounded-xl border border-slate-700">
             <div class="p-4 border-b border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <h2 class="font-semibold text-slate-200 flex items-center gap-2">
-                <Building2 class="w-4 h-4" />
-                Empresas ({{ empresasFiltradas.length }})
-              </h2>
+              <div class="flex items-center gap-2">
+                <h2 class="font-semibold text-slate-200 flex items-center gap-2">
+                  <Building2 class="w-4 h-4" />
+                  Empresas ({{ empresasFiltradas.length }})
+                </h2>
+                <button 
+                  @click="irAEmpresas"
+                  class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                >
+                  Ver todas <ArrowRight class="w-3 h-3" />
+                </button>
+              </div>
               
               <div class="flex items-center gap-2">
                 <!-- Search -->
@@ -401,25 +353,25 @@ onMounted(fetchData)
             <h3 class="font-medium text-slate-200 mb-3">Acciones Rápidas</h3>
             <div class="space-y-2">
               <button 
-                @click="showCrearEmpresaModal = true"
+                @click="irAEmpresas"
                 class="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-sm text-slate-300 transition-colors"
               >
                 <Building2 class="w-4 h-4" />
-                Crear Nueva Empresa
+                Gestión de Empresas
               </button>
               <button 
-                @click="showConfigurarPlanesModal = true"
+                @click="irAPagos"
+                class="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-sm text-slate-300 transition-colors"
+              >
+                <DollarSign class="w-4 h-4" />
+                Validar Pagos
+              </button>
+              <button 
+                @click="irAPlanes"
                 class="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-sm text-slate-300 transition-colors"
               >
                 <TrendingUp class="w-4 h-4" />
                 Configurar Planes
-              </button>
-              <button 
-                @click="irAMarketplace"
-                class="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-sm text-white transition-colors"
-              >
-                <TrendingUp class="w-4 h-4" />
-                Marketplace Plantillas
               </button>
             </div>
           </div>
@@ -537,8 +489,11 @@ onMounted(fetchData)
 
             <!-- Preview comprobante -->
             <div class="aspect-video bg-slate-900 rounded-lg flex items-center justify-center border border-slate-700">
-              <button class="flex items-center gap-2 text-slate-400 hover:text-slate-200">
-                <ImageIcon class="w-5 h-5" />
+              <button 
+                @click="verComprobante"
+                class="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                <Eye class="w-5 h-5" />
                 Ver Comprobante
               </button>
             </div>
@@ -562,174 +517,56 @@ onMounted(fetchData)
       </div>
     </Teleport>
 
-    <!-- Modal: Crear Nueva Empresa -->
+    <!-- Modal: Ver Comprobante -->
     <Teleport to="body">
       <div 
-        v-if="showCrearEmpresaModal"
-        class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-        @click.self="showCrearEmpresaModal = false"
+        v-if="showComprobanteModal && selectedPago"
+        class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+        @click.self="cerrarComprobante"
       >
-        <div class="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-lg">
+        <div class="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-2xl max-h-[90vh] overflow-hidden">
           <div class="p-4 border-b border-slate-700 flex items-center justify-between">
-            <h3 class="font-semibold text-slate-200">Crear Nueva Empresa</h3>
-            <button @click="showCrearEmpresaModal = false" class="text-slate-500 hover:text-slate-300">
+            <div>
+              <h3 class="font-semibold text-slate-200">Comprobante de Pago</h3>
+              <p class="text-sm text-slate-400">{{ selectedPago.empresaNombre }} - {{ selectedPago.referencia || 'Sin ref.' }}</p>
+            </div>
+            <button @click="cerrarComprobante" class="text-slate-500 hover:text-slate-300">
               <XCircle class="w-5 h-5" />
             </button>
           </div>
           
-          <div class="p-4 space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-slate-400 mb-1">Nombre de la Empresa</label>
-              <input
-                v-model="nuevaEmpresa.nombre"
-                type="text"
-                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
-                placeholder="Ej: Mi Empresa S.A."
-              />
+          <div class="p-4 bg-slate-900 flex items-center justify-center min-h-[300px]">
+            <img
+              v-if="selectedPago.comprobanteUrl"
+              :src="selectedPago.comprobanteUrl"
+              alt="Comprobante de pago"
+              class="max-w-full max-h-[60vh] object-contain rounded-lg"
+            />
+            <div v-else class="text-center">
+              <ImageIcon class="w-16 h-16 text-slate-600 mx-auto mb-4" />
+              <p class="text-slate-400">No hay comprobante disponible</p>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-400 mb-1">ID de Empresa (slug)</label>
-              <input
-                v-model="nuevaEmpresa.empresaId"
-                type="text"
-                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
-                placeholder="Ej: mi-empresa"
-              />
-              <p class="text-xs text-slate-500 mt-1">Este ID se usará para el login personalizado</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-400 mb-1">Email del Gerente</label>
-              <input
-                v-model="nuevaEmpresa.email"
-                type="email"
-                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
-                placeholder="gerente@empresa.com"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-400 mb-1">Plan</label>
-              <select
-                v-model="nuevaEmpresa.plan"
-                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
-              >
-                <option v-for="plan in planes" :key="plan.id" :value="plan.id">
-                  {{ plan.nombre }} - ${{ plan.precio }}/mes
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="p-4 border-t border-slate-700 flex gap-2">
-            <button 
-              @click="crearEmpresa"
-              :disabled="loading || !nuevaEmpresa.nombre || !nuevaEmpresa.empresaId"
-              class="flex-1 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium disabled:opacity-50"
-            >
-              {{ loading ? 'Creando...' : 'Crear Empresa' }}
-            </button>
-            <button 
-              @click="showCrearEmpresaModal = false"
-              class="flex-1 py-2 rounded-lg bg-slate-700 text-slate-300 hover:bg-slate-600 text-sm"
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
-
-    <!-- Modal: Configurar Planes -->
-    <Teleport to="body">
-      <div 
-        v-if="showConfigurarPlanesModal"
-        class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-        @click.self="showConfigurarPlanesModal = false"
-      >
-        <div class="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-          <div class="p-4 border-b border-slate-700 flex items-center justify-between">
-            <h3 class="font-semibold text-slate-200">Configurar Planes y Precios</h3>
-            <button @click="showConfigurarPlanesModal = false" class="text-slate-500 hover:text-slate-300">
-              <XCircle class="w-5 h-5" />
-            </button>
           </div>
           
-          <div class="p-4 space-y-4">
-            <div v-for="plan in planes" :key="plan.id" class="bg-slate-700/30 rounded-lg p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="font-semibold text-slate-200">{{ plan.nombre }}</h4>
-                <div class="flex items-center gap-2">
-                  <span class="text-sm text-slate-400">$</span>
-                  <input
-                    v-model.number="plan.precio"
-                    type="number"
-                    class="w-20 bg-slate-900 border border-slate-600 rounded px-2 py-1 text-sm text-slate-200 text-center"
-                  />
-                  <span class="text-sm text-slate-400">/mes</span>
-                </div>
+          <div class="p-4 border-t border-slate-700">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p class="text-slate-500">Monto</p>
+                <p class="font-semibold text-slate-200">{{ formatCurrency(selectedPago.monto) }}</p>
               </div>
-              
-              <div class="grid grid-cols-3 gap-3 text-sm">
-                <div>
-                  <label class="text-xs text-slate-500">Usuarios</label>
-                  <input
-                    v-model.number="plan.usuarios"
-                    type="number"
-                    class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-slate-200"
-                  />
-                </div>
-                <div>
-                  <label class="text-xs text-slate-500">Formularios</label>
-                  <input
-                    v-model.number="plan.formularios"
-                    type="number"
-                    class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-slate-200"
-                  />
-                </div>
-                <div>
-                  <label class="text-xs text-slate-500">Storage (MB)</label>
-                  <input
-                    v-model.number="plan.storage"
-                    type="number"
-                    class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-slate-200"
-                  />
-                </div>
+              <div>
+                <p class="text-slate-500">Plan</p>
+                <p class="font-semibold text-slate-200">{{ selectedPago.planNombre }}</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Fecha</p>
+                <p class="font-semibold text-slate-200">{{ formatDate(selectedPago.fecha) }}</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Método</p>
+                <p class="font-semibold text-slate-200">{{ selectedPago.metodo || 'Transferencia' }}</p>
               </div>
             </div>
-
-            <!-- Cupones -->
-            <div class="border-t border-slate-700 pt-4">
-              <h4 class="font-medium text-slate-200 mb-3">Cupones de Descuento</h4>
-              <div class="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Código de cupón"
-                  class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200"
-                />
-                <input
-                  type="number"
-                  placeholder="Descuento %"
-                  class="w-24 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200"
-                />
-                <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700">
-                  Agregar
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="p-4 border-t border-slate-700 flex gap-2">
-            <button 
-              @click="guardarPlanes"
-              class="flex-1 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium"
-            >
-              Guardar Configuración
-            </button>
-            <button 
-              @click="showConfigurarPlanesModal = false"
-              class="flex-1 py-2 rounded-lg bg-slate-700 text-slate-300 hover:bg-slate-600 text-sm"
-            >
-              Cerrar
-            </button>
           </div>
         </div>
       </div>

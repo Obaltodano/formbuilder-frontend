@@ -20,9 +20,34 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
-// INTERCEPTOR DE RESPUESTA: Para detectar si el token expiró o hubo F5
+// INTERCEPTOR DE RESPUESTA: Normalizar datos y manejar errores
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Normalizar respuestas del backend
+    // El backend envía: { exito: true, data: {...}, mensaje: "..." }
+    // O para login: { token, user } (sin wrapper)
+    const data = response.data;
+    
+    // Si tiene la propiedad 'exito', es el formato nuevo con wrapper
+    if (data && typeof data.exito === 'boolean') {
+      if (data.exito) {
+        // Reemplazar data con el contenido real para simplificar acceso
+        response.data = data.data || data;
+        // Guardar mensaje si existe
+        response.data._mensaje = data.mensaje;
+        response.data._exito = true;
+      } else {
+        // Error del backend, crear error personalizado
+        const error = new Error(data.error || data.mensaje || 'Error del servidor');
+        error.response = { data, status: 400 };
+        error.code = data.code || 'UNKNOWN_ERROR';
+        throw error;
+      }
+    }
+    // Si no tiene 'exito', es formato directo (como login), dejarlo como está
+    
+    return response;
+  },
   (error) => {
     // Si el servidor responde 401, significa que la sesión no es válida
     if (error.response && error.response.status === 401) {
@@ -37,6 +62,22 @@ api.interceptors.response.use(
         window.location.href = '/'; 
       }
     }
+    
+    // Normalizar errores del backend
+    if (error.response && error.response.data) {
+      const data = error.response.data;
+      error.code = data.code || 'UNKNOWN_ERROR';
+      error.message = data.error || data.mensaje || error.message || 'Error de conexión';
+      
+      // Casos especiales
+      if (data.code === 'LIMITE_PLAN_EXCEDIDO') {
+        console.error('⚠️ Límite del plan excedido:', data);
+      }
+      if (data.code === 'EMPRESA_NOT_ACTIVE') {
+        console.error('⚠️ Empresa no activa:', data.status);
+      }
+    }
+    
     return Promise.reject(error);
   }
 );

@@ -6,6 +6,8 @@ export const useUiStore = defineStore('ui', () => {
   const sidebarOpen = ref(false)
   const currentModal = ref(null)
   const toasts = ref([])
+  const notificaciones = ref([])
+  const notificacionesPanelOpen = ref(false)
   const isMobile = ref(false)
   const isTablet = ref(false)
   const isDesktop = ref(true)
@@ -64,10 +66,45 @@ export const useUiStore = defineStore('ui', () => {
     document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
 
+  // Notificaciones
+  const addNotificacion = (notificacion) => {
+    const id = Date.now()
+    notificaciones.value.unshift({
+      id,
+      leida: false,
+      fecha: new Date().toISOString(),
+      ...notificacion
+    })
+    return id
+  }
+
+  const marcarNotificacionLeida = (id) => {
+    const notif = notificaciones.value.find(n => n.id === id)
+    if (notif) notif.leida = true
+  }
+
+  const marcarTodasLeidas = () => {
+    notificaciones.value.forEach(n => n.leida = true)
+  }
+
+  const removeNotificacion = (id) => {
+    notificaciones.value = notificaciones.value.filter(n => n.id !== id)
+  }
+
+  const toggleNotificacionesPanel = () => {
+    notificacionesPanelOpen.value = !notificacionesPanelOpen.value
+  }
+
+  const closeNotificacionesPanel = () => {
+    notificacionesPanelOpen.value = false
+  }
+
   return {
     sidebarOpen,
     currentModal,
     toasts,
+    notificaciones,
+    notificacionesPanelOpen,
     isMobile,
     isTablet,
     isDesktop,
@@ -82,6 +119,13 @@ export const useUiStore = defineStore('ui', () => {
     removeToast,
     checkScreenSize,
     initScreenListener,
-    setTheme
+    setTheme,
+    // Notificaciones
+    addNotificacion,
+    marcarNotificacionLeida,
+    marcarTodasLeidas,
+    removeNotificacion,
+    toggleNotificacionesPanel,
+    closeNotificacionesPanel
   }
 })
